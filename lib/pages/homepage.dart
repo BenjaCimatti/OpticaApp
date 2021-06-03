@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:optica/models/version.dart';
-import 'package:optica/services/api.dart';
+import 'package:optica/repository/VersionRepository.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,11 +9,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<Version> version;
-  static const String apiUrl = 'http://10.0.0.107:8089';
+  static const String baseUrl = 'http://10.0.0.109:8089';
 
   @override
   void initState() {
-    version = ApiHandler(apiUrl: apiUrl).getVersion();
+    version = VersionRepository(baseUrl: baseUrl).getVersion();
     super.initState();
   }
 
@@ -35,9 +35,10 @@ class _HomePageState extends State<HomePage> {
             } else if (snapshot.hasError) {
               return Text("${snapshot.error}");
             }
-
             return CircularProgressIndicator(
-              color: Colors.deepPurple,
+              valueColor: 
+                AlwaysStoppedAnimation<Color>
+                  (Colors.deepPurple)
             );
           },
         ),
