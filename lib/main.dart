@@ -9,8 +9,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      color: Colors.deepPurple,
       debugShowCheckedModeBanner: false,
-      title: 'Prueba API',
+      title: 'Envíos',
       home: HomePage(),
     );
   }
