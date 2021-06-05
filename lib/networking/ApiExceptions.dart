@@ -23,6 +23,10 @@ class UnauthorizedException extends ApiException {
   UnauthorizedException([message]) : super(message, "Unauthorized: ");
 }
 
+class InternalServerException extends ApiException {
+  InternalServerException([message]) : super(message, "Internal Server Error: ");
+}
+
 class InvalidInputException extends ApiException {
   InvalidInputException([String? message]) : super(message, "Invalid Input: ");
 }

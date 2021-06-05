@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:optica/models/version.dart';
-import 'package:optica/models/widgets/VersionAlertDialog.dart';
+import 'package:optica/widgets/VersionAlertDialog.dart';
 import 'package:optica/repository/VersionRepository.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,7 +12,7 @@ class _HomePageState extends State<HomePage> {
   late Future<Version> version;
   static const String baseUrl = 'http://10.0.0.109:8089';
 
-  static const String deviceVersion = '2.0.0';
+  static const String deviceVersion = '1.0.0';
   late String _latestVersion;
   bool _showCircularProgressIndicator = true;
 
@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    version = VersionRepository(baseUrl: baseUrl).getVersion();
+    version = VersionRepository(baseUrl: baseUrl).getVersion(context);
   }
 
 
