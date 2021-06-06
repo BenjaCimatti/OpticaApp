@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:optica/models/version.dart';
+import 'package:optica/models/Version.dart';
 import 'package:optica/networking/ApiBaseHelper.dart';
 
 class VersionRepository {
