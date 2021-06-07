@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:optica/classes/ColorPalette.dart';
+import 'package:optica/classes/Encode.dart';
 import 'package:optica/models/Token.dart';
 import 'package:optica/models/Version.dart';
 import 'package:optica/repository/TokenRepository.dart';
+import 'package:optica/widgets/LoginShapes.dart';
 import 'package:optica/widgets/LoginTextField.dart';
 import 'package:optica/widgets/VersionAlertDialog.dart';
 import 'package:optica/repository/VersionRepository.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 
 
 class Login extends StatefulWidget {
@@ -14,16 +19,18 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   late Future<Version> version;
-  late Future<Token> token;
+  Future<Token>? token;
   
   static const String baseUrl = 'http://10.0.0.109:8089';
 
   static const String deviceVersion = '1.0.0';
   late String _latestVersion;
-  bool _showCircularProgressIndicator = true;
+
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  bool _showProgress = false;
 
   @override
   void initState() {
@@ -36,105 +43,126 @@ class _LoginState extends State<Login> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.purple[50],
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.fill,
-                image: AssetImage('assets/images/DiseñoLogin3.png'),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(width*0.06, height*0.1, 0, height*0.15),
-                      child: Text(
-                        'Inicio de Sesión',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 40.0,
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: ColorPalette().getBluishGrey(),
+        body: Stack(
+          children: [
+            LoginShapes(),
+            SafeArea(
+              child: Stack(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(0, height*0.0753, 0, height*0.0890),
+                          child: SvgPicture.asset(
+                            'assets/svg/Logo.svg',
+                            width: width*0.4,
+                          ),
                         ),
                       ),
-                    ),
-                    LoginTextField(hintText: 'Usuario', obscureText: false, controller: _usernameController,),
-                    LoginTextField(hintText: 'Contraseña', obscureText: true, controller: _passwordController,),
-                    Padding(
-                      padding: EdgeInsets.only(top: height*0.04),
-                      child: Center(
-                        child: ElevatedButton(
-                          onPressed: () => setState(
-                            () {
-                              String username = _usernameController.text;
-                              String password = _passwordController.text;
-
-                              token = TokenRepository(baseUrl: baseUrl).getToken(username, password, context);
-                            }
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(width*0.0864, 0, 0, height*0.0179),
+                        child: Text(
+                          'Inicio de\nSesión',
+                          style: TextStyle(
+                            height: 1.3,
+                            fontFamily: 'Poppins',
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: height*0.0513,
                           ),
-                          child: Text(
-                            'Iniciar Sesión',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 20,
+                        ),
+                      ),
+                      LoginTextField(hintText: 'Usuario', obscureText: false, controller: _usernameController,),
+                      LoginTextField(hintText: 'Contraseña', obscureText: true, controller: _passwordController,),
+                      Padding(
+                        padding: EdgeInsets.only(top: height*0.02),
+                        child: Center(
+                          child: ElevatedButton(
+                            onPressed:  () {
+                              setState(
+                                () {
+                                  _showProgress = true;
+
+                                  String username = _usernameController.text;
+                                  String rawPassword = _passwordController.text;
+
+                                  String password = Encode().hash256(rawPassword);
+
+                                  token = TokenRepository(baseUrl: baseUrl).getToken(username, password, context);
+                                }
+                              );
+                            },
+                            child: Text(
+                              'Iniciar Sesión',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20,
+                              ),
+                            ),
+                            style: ButtonStyle(
+                              elevation: MaterialStateProperty.all<double>(0),
+                              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(horizontal: width*0.15, vertical: height*0.028)),
+                              backgroundColor: MaterialStateProperty.all<Color>(ColorPalette().getLightGreen()),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),
                             ),
                           ),
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(horizontal: width*0.2, vertical: height*0.028)),
-                            backgroundColor: MaterialStateProperty.all<Color>(Colors.purple[800]!),
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),
-                          ),
                         ),
                       ),
+                    ],
+                  ),
+                  Center(
+                    child: FutureBuilder<Version>(
+                      future: version,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          _latestVersion = snapshot.data!.version;
+                          if (deviceVersion != _latestVersion) {
+                            VersionAlertDialog().createDialog(context);
+                          }
+                        } else if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        }
+                        return Container();
+                      },
                     ),
-                  ],
-                ),
-                Center(
-                  child: FutureBuilder<Version>(
-                    future: version,
+                  ),
+                  FutureBuilder<Token> (
+                    future: token,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        //return Text(snapshot.data!.version);
-                        _latestVersion = snapshot.data!.version;
-                        if (deviceVersion != _latestVersion) {
-                          VersionAlertDialog().createDialog(context);
-                        } else {
-                          _showCircularProgressIndicator = false;
-                        }
-
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
-                      if (_showCircularProgressIndicator) {
-                        return CircularProgressIndicator(
-                          valueColor: 
-                            AlwaysStoppedAnimation<Color>
-                              (Colors.deepPurple)
-                        );
+                      } else if (_showProgress == true) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: height*0.5874),
+                          child: Center(
+                            child: SizedBox(
+                              height: height*0.2319,
+                              width: width*0.41,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(ColorPalette().getLightGreen()),
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                        ); 
                       }
                       return Container();
                     },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
-
-
-

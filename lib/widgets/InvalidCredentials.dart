@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:optica/classes/ColorPalette.dart';
 
 class InvalidCredentials {
 
@@ -11,26 +12,26 @@ class InvalidCredentials {
       builder: (context) {
       return AlertDialog(
         title: Text(
-          'Inicio de Sesión fallido',
+          'Inicio de sesión fallido',
           style: TextStyle(
-            color: Colors.deepPurple[400]
+            color: ColorPalette().getBluishGrey()
           ),
         ),
         content: Text(
           'Usuario y/o Contraseña incorrectos',
           style: TextStyle(
-            color: Colors.deepPurple[200]
+            color: ColorPalette().getLightBlueishGrey()
           ),
         ),
         elevation: 10.0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         actions: <Widget>[
           MaterialButton(
             onPressed: () => Phoenix.rebirth(context),
             child: Text(
               'Ok',
               style: TextStyle(
-                color: Colors.deepPurple[700]
+                color: ColorPalette().getBluishGrey()
               ),
             ),
           )

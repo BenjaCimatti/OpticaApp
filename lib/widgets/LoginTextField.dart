@@ -31,26 +31,30 @@ class _LoginTextFieldState extends State<LoginTextField> {
     double height = MediaQuery.of(context).size.height;
     
     return Container(
-      margin: EdgeInsets.fromLTRB(width*0.07, 0, width*0.07, height*0.015),
+      margin: EdgeInsets.fromLTRB(width*0.0864, 0, width*0.0864, height*0.0205),
       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
       child: TextField(
         obscureText: widget.obscureText,
         controller: widget.controller,
         decoration: InputDecoration(
           hintText: widget.hintText,
+          hintStyle: TextStyle(
+            fontFamily: 'Poppins',
+            color: Colors.black.withOpacity(0.25)
+          ),
           border: InputBorder.none,
         ),
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            spreadRadius: -8,
-            blurRadius: 8,
-            offset: Offset.fromDirection(LoginTextField.pi/2, 3)
-          ),
-        ],
+        borderRadius: BorderRadius.circular(8),
+        // boxShadow: <BoxShadow>[
+        //   BoxShadow(
+        //     spreadRadius: -8,
+        //     blurRadius: 8,
+        //     offset: Offset.fromDirection(LoginTextField.pi/2, 3)
+        //   ),
+        // ],
       ),
     );
   }
