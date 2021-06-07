@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.24748737"
-     inkscape:cx="558.30895"
+     inkscape:cx="-98.290213"
      inkscape:cy="995.37136"
      inkscape:document-units="mm"
      inkscape:current-layer="layer9"
@@ -53,60 +53,10 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <g
-     inkscape:label="Capa 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,211.00002)"
-     style="display:none">
-    <path
-       style="opacity:1;fill:#5e708c;fill-opacity:1;stroke:none;stroke-width:1.18200791;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 0.52259393,203.38399 A 113.24741,110.93045 0 0 0 113.76995,92.453799 113.24741,110.93045 0 0 0 0.52259393,-18.476889 a 113.24741,110.93045 0 0 0 -0.45941007,0.016 V 203.36125 a 113.24741,110.93045 0 0 0 0.45941007,0.0227 z"
-       id="path1473"
-       inkscape:connector-curvature="0" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer6"
-     inkscape:label="Capa 2"
-     style="display:none">
-    <path
-       transform="translate(0,211.00002)"
-       style="display:inline;fill:#5e708c;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 285.75371,121.96811 149.84715,231.81647 285.75371,297.16425 Z"
-       id="path1477"
-       inkscape:connector-curvature="0" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer7"
-     inkscape:label="Capa 3"
-     style="display:none">
-    <path
-       transform="translate(0,211.00002)"
-       style="display:inline;opacity:1;fill:#5e708c;fill-opacity:1;stroke:none;stroke-width:1.19266164;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 244.66182,-63.988839 41.19296,14.42104 -0.0539,28.06559 -8.53375,24.9261506 -50.11774,-17.4815706 z"
-       id="rect1479"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer8"
-     inkscape:label="Capa 4"
-     style="display:none">
-    <path
-       transform="translate(0,211.00002)"
-       style="display:inline;opacity:1;fill:#5e708c;fill-opacity:1;stroke:none;stroke-width:1.20000005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 196.54295,-194.70431 c 63.78348,53.79074 0,0 63.78348,53.79074 l -82.75316,17.59951 z"
-       id="rect1482"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc" />
-  </g>
   <g
      inkscape:groupmode="layer"
      id="layer9"

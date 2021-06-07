@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:http/http.dart' as http;
-import 'package:optica/widgets/InvalidCredentials.dart';
-import 'package:optica/widgets/NoInternet.dart';
-import 'package:optica/widgets/StatusCode500.dart';
+import 'package:optica/widgets/MyDialog.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'ApiExceptions.dart';
@@ -22,7 +21,13 @@ class ApiBaseHelper {
       final response = await http.get(Uri.parse('$baseUrl$endpoint'));
       responseJson = _returnResponse(response, null, context);
     } on SocketException {
-      NoInternet().createDialog(context);
+      MyDialog(
+        context: context,
+        alertTitle: 'Conexión Fallida',
+        alertContent: 'Por favor, revise su conexión\na internet',
+        buttonText: 'Reiniciar Aplicación',
+        buttonAction: () => Phoenix.rebirth(context)
+      ).createDialog();
       throw FetchDataException('No Internet connection');
     }
     print('GET Recieved!');
@@ -39,7 +44,13 @@ class ApiBaseHelper {
       );
       responseJson = _returnResponse(response, identifier, context);
     } on SocketException {
-      NoInternet().createDialog(context);
+      MyDialog(
+        context: context,
+        alertTitle: 'Conexión Fallida',
+        alertContent: 'Por favor, revise su conexión\na internet',
+        buttonText: 'Reiniciar Aplicación',
+        buttonAction: () => Phoenix.rebirth(context)
+      ).createDialog();
       throw FetchDataException('No Internet Connection');
     }
     print('POST Recieved!');
@@ -56,14 +67,26 @@ class ApiBaseHelper {
         throw BadRequestException(response.body.toString());
       case 401:
         if (identifier == 'token') {
-          InvalidCredentials().createDialog(context);
+          MyDialog(
+            context: context,
+            alertTitle: 'Inicio de sesión fallido',
+            alertContent: 'Usuario y/o Contraseña incorrectos',
+            buttonText: 'Ok',
+            buttonAction: () => Phoenix.rebirth(context)
+          ).createDialog();
         } else if (identifier == 'envios') {
 
         }
         throw UnauthorizedException(response.body.toString());
       case 403:
       case 500:
-        StatusCode500().createDialog(context);
+        MyDialog(
+          context: context,
+          alertTitle: 'Error Interno del Servidor',
+          alertContent: 'Se produjo un error en el servidor,\nasegúrese de tener una conexión\nestable a internet.\nVuelva a intentar más tarde',
+          buttonText: 'Reiniciar Aplicación',
+          buttonAction: () => Phoenix.rebirth(context)
+        ).createDialog();
         throw InternalServerException(response.body.toString());
       default:
         throw FetchDataException(

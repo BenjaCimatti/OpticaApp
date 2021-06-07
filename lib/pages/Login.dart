@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:optica/classes/ColorPalette.dart';
 import 'package:optica/classes/Encode.dart';
@@ -6,7 +7,7 @@ import 'package:optica/models/Version.dart';
 import 'package:optica/repository/TokenRepository.dart';
 import 'package:optica/widgets/LoginShapes.dart';
 import 'package:optica/widgets/LoginTextField.dart';
-import 'package:optica/widgets/VersionAlertDialog.dart';
+import 'package:optica/widgets/MyDialog.dart';
 import 'package:optica/repository/VersionRepository.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -126,7 +127,13 @@ class _LoginState extends State<Login> {
                         if (snapshot.hasData) {
                           _latestVersion = snapshot.data!.version;
                           if (deviceVersion != _latestVersion) {
-                            VersionAlertDialog().createDialog(context);
+                            MyDialog(
+                              context: context,
+                              alertTitle: 'Nueva Versión Disponible',
+                              alertContent: 'Su versión está obsoleta,\nconsulte con su proveedor',
+                              buttonText: 'Salir',
+                              buttonAction: () => exit(0)
+                            ).createDialog();
                           }
                         } else if (snapshot.hasError) {
                           return Text("${snapshot.error}");
