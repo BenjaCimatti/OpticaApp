@@ -10,9 +10,7 @@ import 'ApiExceptions.dart';
 class ApiBaseHelper {
   String baseUrl;
 
-  ApiBaseHelper({
-    required this.baseUrl
-  });
+  ApiBaseHelper({required this.baseUrl});
 
   Future<dynamic> get(String endpoint, BuildContext context) async {
     print('[GET] $endpoint');
@@ -22,19 +20,19 @@ class ApiBaseHelper {
       responseJson = _returnResponse(response, null, context);
     } on SocketException {
       MyDialog(
-        context: context,
-        alertTitle: 'Conexión Fallida',
-        alertContent: 'Por favor, revise su conexión\na internet',
-        buttonText: 'Reiniciar Aplicación',
-        buttonAction: () => Phoenix.rebirth(context)
-      ).createDialog();
+          context: context,
+          alertTitle: 'Conexión Fallida',
+          alertContent: 'Por favor, revise su conexión\na internet',
+          buttonText: 'Reiniciar Aplicación',
+          buttonAction: () => Phoenix.rebirth(context)).createDialog();
       throw FetchDataException('No Internet connection');
     }
     print('GET Recieved!');
     return responseJson;
   }
 
-  Future<dynamic> post(String endpoint, String? identifier, String postBody, BuildContext context) async {
+  Future<dynamic> post(String endpoint, String? identifier, String postBody,
+      BuildContext context) async {
     print('[POST] $endpoint');
     var responseJson;
     try {
@@ -45,19 +43,19 @@ class ApiBaseHelper {
       responseJson = _returnResponse(response, identifier, context);
     } on SocketException {
       MyDialog(
-        context: context,
-        alertTitle: 'Conexión Fallida',
-        alertContent: 'Por favor, revise su conexión\na internet',
-        buttonText: 'Reiniciar Aplicación',
-        buttonAction: () => Phoenix.rebirth(context)
-      ).createDialog();
+          context: context,
+          alertTitle: 'Conexión Fallida',
+          alertContent: 'Por favor, revise su conexión\na internet',
+          buttonText: 'Reiniciar Aplicación',
+          buttonAction: () => Phoenix.rebirth(context)).createDialog();
       throw FetchDataException('No Internet Connection');
     }
     print('POST Recieved!');
     return responseJson;
   }
 
-  dynamic _returnResponse(http.Response response, String? identifier, BuildContext context) {
+  dynamic _returnResponse(
+      http.Response response, String? identifier, BuildContext context) {
     switch (response.statusCode) {
       case 200:
         var responseJson = json.decode(response.body.toString());
@@ -68,30 +66,26 @@ class ApiBaseHelper {
       case 401:
         if (identifier == 'token') {
           MyDialog(
-            context: context,
-            alertTitle: 'Inicio de sesión fallido',
-            alertContent: 'Usuario y/o Contraseña incorrectos',
-            buttonText: 'Ok',
-            buttonAction: () => Phoenix.rebirth(context)
-          ).createDialog();
-        } else if (identifier == 'envios') {
-
-        }
+              context: context,
+              alertTitle: 'Inicio de sesión fallido',
+              alertContent: 'Usuario y/o Contraseña incorrectos',
+              buttonText: 'Ok',
+              buttonAction: () => Phoenix.rebirth(context)).createDialog();
+        } else if (identifier == 'envios') {}
         throw UnauthorizedException(response.body.toString());
       case 403:
       case 500:
         MyDialog(
-          context: context,
-          alertTitle: 'Error Interno del Servidor',
-          alertContent: 'Se produjo un error en el servidor,\nasegúrese de tener una conexión\nestable a internet.\nVuelva a intentar más tarde',
-          buttonText: 'Reiniciar Aplicación',
-          buttonAction: () => Phoenix.rebirth(context)
-        ).createDialog();
+            context: context,
+            alertTitle: 'Error Interno del Servidor',
+            alertContent:
+                'Se produjo un error en el servidor,\nasegúrese de tener una conexión\nestable a internet.\nVuelva a intentar más tarde',
+            buttonText: 'Reiniciar Aplicación',
+            buttonAction: () => Phoenix.rebirth(context)).createDialog();
         throw InternalServerException(response.body.toString());
       default:
         throw FetchDataException(
             'Error occured while Communication with Server with StatusCode : ${response.statusCode}');
-  
     }
   }
 }

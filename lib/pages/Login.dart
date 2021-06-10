@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:optica/classes/ColorPalette.dart';
 import 'package:optica/classes/Encode.dart';
 import 'package:optica/models/Token.dart';
@@ -11,8 +12,6 @@ import 'package:optica/widgets/MyDialog.dart';
 import 'package:optica/repository/VersionRepository.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-
-
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
@@ -21,17 +20,15 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   late Future<Version> version;
   Future<Token>? token;
-  
+
   static const String baseUrl = 'http://10.0.0.109:8089';
 
   static const String deviceVersion = '1.0.0';
   late String _latestVersion;
 
-
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  bool _showProgress = false;
 
   @override
   void initState() {
@@ -60,15 +57,17 @@ class _LoginState extends State<Login> {
                     children: [
                       Center(
                         child: Container(
-                          margin: EdgeInsets.fromLTRB(0, height*0.0753, 0, height*0.0890),
+                          margin: EdgeInsets.fromLTRB(
+                              0, height * 0.0753, 0, height * 0.05),
                           child: SvgPicture.asset(
                             'assets/svg/Logo.svg',
-                            width: width*0.4,
+                            width: width * 0.4,
                           ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(width*0.0864, 0, 0, height*0.0179),
+                        padding: EdgeInsets.fromLTRB(
+                            width * 0.0864, 0, 0, height * 0.0179),
                         child: Text(
                           'Inicio de\nSesión',
                           style: TextStyle(
@@ -76,29 +75,54 @@ class _LoginState extends State<Login> {
                             fontFamily: 'Poppins',
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
-                            fontSize: height*0.0513,
+                            fontSize: height * 0.0513,
                           ),
                         ),
                       ),
-                      LoginTextField(hintText: 'Usuario', obscureText: false, controller: _usernameController,),
-                      LoginTextField(hintText: 'Contraseña', obscureText: true, controller: _passwordController,),
+                      LoginTextField(
+                        hintText: 'Usuario',
+                        obscureText: false,
+                        controller: _usernameController,
+                      ),
+                      LoginTextField(
+                        hintText: 'Contraseña',
+                        obscureText: true,
+                        controller: _passwordController,
+                      ),
                       Padding(
-                        padding: EdgeInsets.only(top: height*0.02),
+                        padding: EdgeInsets.only(top: height * 0.02),
                         child: Center(
                           child: ElevatedButton(
-                            onPressed:  () {
-                              setState(
-                                () {
-                                  _showProgress = true;
+                            onPressed: () {
+                              setState(() {
 
-                                  String username = _usernameController.text;
-                                  String rawPassword = _passwordController.text;
+                                String username = _usernameController.text;
+                                String rawPassword = _passwordController.text;
 
-                                  String password = Encode().hash256(rawPassword);
+                                String password = Encode().hash256(rawPassword);
 
-                                  token = TokenRepository(baseUrl: baseUrl).getToken(username, password, context);
-                                }
-                              );
+                                token = TokenRepository(baseUrl: baseUrl)
+                                    .getToken(username, password, context);
+
+                                token!.then((value) {
+                                  if (value.idRol == 2) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ListaEnvios(token: value.token,)
+                                    ));
+                                  } else {
+                                    MyDialog(
+                                        context: context,
+                                        alertTitle: 'Inicio de sesión fallido',
+                                        alertContent:
+                                            'Esta cuenta no pertenece\na un transportista',
+                                        buttonText: 'Ok',
+                                        buttonAction: () => Phoenix.rebirth(
+                                            context)).createDialog();
+                                  }
+                                });
+                              });
                             },
                             child: Text(
                               'Iniciar Sesión',
@@ -111,9 +135,21 @@ class _LoginState extends State<Login> {
                             ),
                             style: ButtonStyle(
                               elevation: MaterialStateProperty.all<double>(0),
-                              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(horizontal: width*0.15, vertical: height*0.028)),
-                              backgroundColor: MaterialStateProperty.all<Color>(ColorPalette().getLightGreen()),
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(50))),
+                              padding:
+                                  MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                EdgeInsets.symmetric(
+                                    horizontal: width * 0.15,
+                                    vertical: height * 0.028),
+                              ),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                ColorPalette().getLightGreen(),
+                              ),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -128,12 +164,12 @@ class _LoginState extends State<Login> {
                           _latestVersion = snapshot.data!.version;
                           if (deviceVersion != _latestVersion) {
                             MyDialog(
-                              context: context,
-                              alertTitle: 'Nueva Versión Disponible',
-                              alertContent: 'Su versión está obsoleta,\nconsulte con su proveedor',
-                              buttonText: 'Salir',
-                              buttonAction: () => exit(0)
-                            ).createDialog();
+                                context: context,
+                                alertTitle: 'Nueva Versión Disponible',
+                                alertContent:
+                                    'Su versión está obsoleta,\nconsulte con su proveedor',
+                                buttonText: 'Salir',
+                                buttonAction: () => exit(0)).createDialog();
                           }
                         } else if (snapshot.hasError) {
                           return Text("${snapshot.error}");
@@ -142,34 +178,42 @@ class _LoginState extends State<Login> {
                       },
                     ),
                   ),
-                  FutureBuilder<Token> (
-                    future: token,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                      } else if (_showProgress == true) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: height*0.5874),
-                          child: Center(
-                            child: SizedBox(
-                              height: height*0.2319,
-                              width: width*0.41,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(ColorPalette().getLightGreen()),
-                                strokeWidth: 2,
-                              ),
-                            ),
-                          ),
-                        ); 
-                      }
-                      return Container();
-                    },
-                  ),
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class ListaEnvios extends StatefulWidget {
+
+  String token;
+
+  ListaEnvios({
+    required this.token,
+  });
+
+
+
+  @override
+  _ListaEnviosState createState() => _ListaEnviosState();
+}
+
+class _ListaEnviosState extends State<ListaEnvios> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: ColorPalette().getBluishGrey(),
+      appBar: AppBar(
+        title: Text('Lista Envios'),
+        backgroundColor: ColorPalette().getDarkBlueishGrey(),
+        elevation: 0,
+      ),
+      body: Text(widget.token),
     );
   }
 }
