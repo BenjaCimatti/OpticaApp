@@ -12,12 +12,24 @@ class ApiBaseHelper {
 
   ApiBaseHelper({required this.baseUrl});
 
-  Future<dynamic> get(String endpoint, BuildContext context) async {
+  Future<dynamic> get(String endpoint, String? token, BuildContext context) async {
     print('[GET] $endpoint');
     var responseJson;
     try {
-      final response = await http.get(Uri.parse('$baseUrl$endpoint'));
-      responseJson = _returnResponse(response, null, context);
+      if (token != null) {
+        final response = await http.get(
+          Uri.parse('$baseUrl$endpoint'),
+          headers: {
+            HttpHeaders.authorizationHeader: 'Bearer $token',
+          },
+        );
+        responseJson = _returnResponse(response, null, context);
+      } else {
+        final response = await http.get(
+          Uri.parse('$baseUrl$endpoint'),
+        );
+        responseJson = _returnResponse(response, null, context);
+      }
     } on SocketException {
       MyDialog(
           context: context,
@@ -58,7 +70,8 @@ class ApiBaseHelper {
       http.Response response, String? identifier, BuildContext context) {
     switch (response.statusCode) {
       case 200:
-        var responseJson = json.decode(response.body.toString());
+        String stringResponse = Utf8Decoder().convert(response.bodyBytes);
+        var responseJson = jsonDecode(stringResponse);
         print(responseJson);
         return responseJson;
       case 400:

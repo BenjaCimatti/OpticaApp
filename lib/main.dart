@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       color:
-          ColorPalette().getDarkBlueishGrey(), // Have to find a darker one...
+          ColorPalette().getDarkBlueishGrey(),
       debugShowCheckedModeBanner: false,
       title: 'Envíos',
       home: Login(),

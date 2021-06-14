@@ -5,6 +5,7 @@ import 'package:optica/classes/ColorPalette.dart';
 import 'package:optica/classes/Encode.dart';
 import 'package:optica/models/Token.dart';
 import 'package:optica/models/Version.dart';
+import 'package:optica/pages/ListaEnvios.dart';
 import 'package:optica/repository/TokenRepository.dart';
 import 'package:optica/widgets/LoginShapes.dart';
 import 'package:optica/widgets/LoginTextField.dart';
@@ -19,9 +20,9 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   late Future<Version> version;
-  Future<Token>? token;
+  late Future<Token> token;
 
-  static const String baseUrl = 'http://10.0.0.109:8089';
+  static const String baseUrl = 'http://10.0.0.5:8089';
 
   static const String deviceVersion = '1.0.0';
   late String _latestVersion;
@@ -104,12 +105,12 @@ class _LoginState extends State<Login> {
                                 token = TokenRepository(baseUrl: baseUrl)
                                     .getToken(username, password, context);
 
-                                token!.then((value) {
+                                token.then((value) {
                                   if (value.idRol == 2) {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => ListaEnvios(token: value.token,)
+                                          builder: (context) => ListaEnvios(token: value.token, username: value.usuario, baseUrl: baseUrl,)
                                     ));
                                   } else {
                                     MyDialog(
@@ -184,36 +185,6 @@ class _LoginState extends State<Login> {
           ],
         ),
       ),
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class ListaEnvios extends StatefulWidget {
-
-  String token;
-
-  ListaEnvios({
-    required this.token,
-  });
-
-
-
-  @override
-  _ListaEnviosState createState() => _ListaEnviosState();
-}
-
-class _ListaEnviosState extends State<ListaEnvios> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorPalette().getBluishGrey(),
-      appBar: AppBar(
-        title: Text('Lista Envios'),
-        backgroundColor: ColorPalette().getDarkBlueishGrey(),
-        elevation: 0,
-      ),
-      body: Text(widget.token),
     );
   }
 }

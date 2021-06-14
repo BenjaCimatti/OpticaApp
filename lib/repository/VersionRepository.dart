@@ -18,7 +18,7 @@ class VersionRepository {
   late ApiBaseHelper _helper = ApiBaseHelper(baseUrl: baseUrl);
 
   Future<Version> getVersion(BuildContext context) async { // Gets Version from the API
-    final response = await _helper.get('/api/Version/Get', context);
+    final response = await _helper.get('/api/Version/Get', null, context);
     return Version.fromJson(response);
   }
 }

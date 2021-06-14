@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 class LoginTextField extends StatefulWidget {
-  
-  static const double pi = math.pi;
 
   final String hintText;
 
@@ -48,13 +46,6 @@ class _LoginTextFieldState extends State<LoginTextField> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        // boxShadow: <BoxShadow>[
-        //   BoxShadow(
-        //     spreadRadius: -8,
-        //     blurRadius: 8,
-        //     offset: Offset.fromDirection(LoginTextField.pi/2, 3)
-        //   ),
-        // ],
       ),
     );
   }
