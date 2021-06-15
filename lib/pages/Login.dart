@@ -22,7 +22,7 @@ class _LoginState extends State<Login> {
   late Future<Version> version;
   late Future<Token> token;
 
-  static const String baseUrl = 'http://10.0.0.5:8089';
+  static const String baseUrl = 'http://10.0.0.5:8088';
 
   static const String deviceVersion = '1.0.0';
   late String _latestVersion;

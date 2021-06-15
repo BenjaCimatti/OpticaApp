@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:optica/classes/ColorPalette.dart';
 import 'package:optica/models/Envio.dart';
 import 'package:optica/repository/EnvioRepository.dart';
@@ -33,8 +34,8 @@ class _ListaEnviosState extends State<ListaEnvios> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
 
     
 
@@ -91,16 +92,16 @@ class _ListaEnviosState extends State<ListaEnvios> {
                 ),
               ),
             ),
-            Expanded(
-              flex: 4,
-              child: FutureBuilder<List<Envio>>(
-                future: envio,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    List<Envio> lista;
-                    lista = snapshot.data!.toList();
+            FutureBuilder<List<Envio>>(
+              future: envio,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<Envio> lista;
+                  lista = snapshot.data!.toList();
 
-                    return Container(
+                  return Expanded(
+                    flex: 4,
+                    child: Container(
                       child: ListView.builder(
                         physics: BouncingScrollPhysics(),
                         itemCount: lista.length,
@@ -108,12 +109,44 @@ class _ListaEnviosState extends State<ListaEnvios> {
                           return _createListTile(lista[index]);
                         }
                       ),
-                    );
+                    ),
+                  );
 
-                  }
-                  return Center(child: CircularProgressIndicator());
+                } else {
+                  return Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: width * 0.13),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/svg/NoData.svg',
+                          ),
+                          Padding(
+                            padding: EdgeInsetsDirectional.only(bottom: height * 0.05),
+                            child: Text(
+                              '¡Parece que no tienes envíos!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                                fontSize: height * 0.03,
+                                color: ColorPalette().getLightGreen()
+                              ),
+                            ),
+                          ),
+                          FloatingActionButton(
+                            onPressed: (){},
+                            backgroundColor: ColorPalette().getLightGreen(),
+                            elevation: 0,
+                            child: Icon(Icons.refresh),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
                 }
-              ),
+              }
             ),
           ],
         ),

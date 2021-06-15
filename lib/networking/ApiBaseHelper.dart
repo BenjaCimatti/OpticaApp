@@ -74,6 +74,10 @@ class ApiBaseHelper {
         var responseJson = jsonDecode(stringResponse);
         print(responseJson);
         return responseJson;
+      case 204:
+        var responseJson = jsonDecode(response.body);
+        return responseJson;
+
       case 400:
         throw BadRequestException(response.body.toString());
       case 401:
@@ -86,7 +90,6 @@ class ApiBaseHelper {
               buttonAction: () => Phoenix.rebirth(context)).createDialog();
         } else if (identifier == 'envios') {}
         throw UnauthorizedException(response.body.toString());
-      case 403:
       case 500:
         MyDialog(
             context: context,
