@@ -1,10 +1,14 @@
+
+
+import 'package:optica/classes/FormatDate.dart';
+
 class Envio {
   int idEnvio;
   int idCliente;
   String descCliente;
   int idTransportista;
   String descTransportista;
-  DateTime fechaCarga;
+  String fechaCarga;
   dynamic? fechaEnvio;
   int idEstado;
   String descEstado;
@@ -25,13 +29,15 @@ class Envio {
       this.geoLongitud,
   });
 
+
+
   factory Envio.fromJson(Map<String, dynamic> json) => Envio(
       idEnvio: json["IdEnvio"],
       idCliente: json["IdCliente"],
       descCliente: json["DescCliente"],
       idTransportista: json["IdTransportista"],
       descTransportista: json["DescTransportista"],
-      fechaCarga: DateTime.parse(json["FechaCarga"]),
+      fechaCarga: formatDate((json["FechaCarga"])),
       fechaEnvio: json["FechaEnvio"],
       idEstado: json["IdEstado"],
       descEstado: json["DescEstado"],

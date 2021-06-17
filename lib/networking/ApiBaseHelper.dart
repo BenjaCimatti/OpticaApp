@@ -12,13 +12,13 @@ class ApiBaseHelper {
 
   ApiBaseHelper({required this.baseUrl});
 
-  Future<dynamic> get(String endpoint, String? token, BuildContext context) async {
+  Future<dynamic> get(String endpoint, String? token, queryParameter,BuildContext context) async {
     print('[GET] $endpoint');
     var responseJson;
     try {
       if (token != null) {
         final response = await http.get(
-          Uri.parse('$baseUrl$endpoint'),
+          Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParameter),
           headers: {
             HttpHeaders.authorizationHeader: 'Bearer $token',
           },
@@ -51,6 +51,9 @@ class ApiBaseHelper {
       final response = await http.post(
         Uri.parse('$baseUrl$endpoint'),
         body: postBody,
+        headers: {
+          HttpHeaders.contentTypeHeader : 'application/json',
+        }
       );
       responseJson = _returnResponse(response, identifier, context);
     } on SocketException {

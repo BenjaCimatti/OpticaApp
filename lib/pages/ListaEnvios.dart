@@ -10,11 +10,13 @@ class ListaEnvios extends StatefulWidget {
 
   String token;
   String username;
+  String? descUsuario;
   String baseUrl;
 
   ListaEnvios({
     required this.token,
     required this.username,
+    this.descUsuario,
     required this.baseUrl,
   });
 
@@ -25,6 +27,8 @@ class ListaEnvios extends StatefulWidget {
 class _ListaEnviosState extends State<ListaEnvios> {
 
   late Future<List<Envio>> envio;
+
+  final _markedEnvios = <Envio>[];
 
   @override
   void initState() {
@@ -38,8 +42,24 @@ class _ListaEnviosState extends State<ListaEnvios> {
     double width = MediaQuery.of(context).size.width;
 
     
+    
 
     return Scaffold(
+      floatingActionButton:
+        FloatingActionButton(
+          onPressed: (){
+            setState(() {
+              _markedEnvios.forEach((element) {
+                print(element.descCliente);
+                print(element.idEnvio);
+              });
+            });
+          },
+          backgroundColor: ColorPalette().getLightGreen(),
+          elevation: 0,
+          child: Icon(Icons.local_shipping_rounded),
+        ),
+
       backgroundColor: ColorPalette().getBluishGrey(),
       body: SafeArea(
         child: Column(
@@ -57,22 +77,23 @@ class _ListaEnviosState extends State<ListaEnvios> {
                 ]
               ),
               child: ListTile(
+                isThreeLine: true,
+                //visualDensity: ,
                 title: Text(
                   'Envíos',
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
-                    fontSize: height * 0.08,
+                    fontSize: height * 0.07,
                   ),
                 ),
                 subtitle: Padding(
                   padding: const EdgeInsets.only(left: 2.1),
                   child: Text(
-                    widget.username,
-                    textAlign: TextAlign.start,
+                    '${widget.descUsuario}\n${widget.username}',
                     style: TextStyle(
-                      height: 0.1,
+                      height: 1.1,
                       fontFamily: 'Poppins',
                       color: Colors.white.withOpacity(0.5),
                       fontWeight: FontWeight.w300,
@@ -100,7 +121,7 @@ class _ListaEnviosState extends State<ListaEnvios> {
                   lista = snapshot.data!.toList();
 
                   return Expanded(
-                    flex: 4,
+                    //flex: 4,
                     child: Container(
                       child: ListView.builder(
                         physics: BouncingScrollPhysics(),
@@ -113,38 +134,7 @@ class _ListaEnviosState extends State<ListaEnvios> {
                   );
 
                 } else {
-                  return Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: width * 0.13),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/svg/NoData.svg',
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.only(bottom: height * 0.05),
-                            child: Text(
-                              '¡Parece que no tienes envíos!',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w600,
-                                fontSize: height * 0.03,
-                                color: ColorPalette().getLightGreen()
-                              ),
-                            ),
-                          ),
-                          FloatingActionButton(
-                            onPressed: (){},
-                            backgroundColor: ColorPalette().getLightGreen(),
-                            elevation: 0,
-                            child: Icon(Icons.refresh),
-                          )
-                        ],
-                      ),
-                    ),
-                  );
+                  return NoData(width: width, height: height);
                 }
               }
             ),
@@ -155,6 +145,8 @@ class _ListaEnviosState extends State<ListaEnvios> {
   }
 
   _createListTile(Envio envio) {
+    final bool alreadyMarked = _markedEnvios.contains(envio);
+
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
       child: Card(
@@ -162,12 +154,8 @@ class _ListaEnviosState extends State<ListaEnvios> {
         color: ColorPalette().getLightBlueishGrey(),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: ListTile(
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.circle, color: ColorPalette().getLightGreen(),),
-            ],
-          ),
+          trailing: alreadyMarked ? 
+            TrailingIcon(color: ColorPalette().getLightGreen()) : TrailingIcon(color: Colors.black.withOpacity(0),),
           isThreeLine: true,
           title: Text(
             envio.descCliente,
@@ -185,8 +173,87 @@ class _ListaEnviosState extends State<ListaEnvios> {
             ),
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          onTap: () => print('hola'),
+          onTap: () {
+            setState(() {
+            if(alreadyMarked) {
+              _markedEnvios.remove(envio);
+            } else {
+              _markedEnvios.add(envio);
+            }          
+            });
+          },
         ),
+      ),
+    );
+  }
+}
+
+class NoData extends StatelessWidget {
+  const NoData({
+    Key? key,
+    required this.width,
+    required this.height,
+  }) : super(key: key);
+
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: width * 0.13),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              'assets/svg/NoData.svg',
+              placeholderBuilder: (context) {
+                return Center(
+                    child: CircularProgressIndicator(
+                      valueColor: new AlwaysStoppedAnimation<Color>(ColorPalette().getLightGreen()),
+                    ),
+                  );
+              }
+            ),
+            SizedBox(
+              height: height * 0.1,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TrailingIcon extends StatelessWidget {
+  TrailingIcon({
+    Key? key,
+    required this.color,
+  }) : super(key: key);
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            
+            decoration: BoxDecoration(
+              color: ColorPalette().getBluishGrey(),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: ColorPalette().getLightGreen(),
+                width: 2
+
+              )
+            ),
+            child: Icon(Icons.check_circle_rounded, color: color,),
+          )
+        ],
       ),
     );
   }

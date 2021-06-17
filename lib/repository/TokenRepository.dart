@@ -19,10 +19,11 @@ class TokenRepository {
   late String _postBody;
   late ApiBaseHelper _helper = ApiBaseHelper(baseUrl: baseUrl);
 
-  Future<Token> getToken(String username, String password, BuildContext context) async { // Sends credentials to the API and receives a JWT
-    _postBody = jsonEncode(<String, String>{
-      'username': username,
-      'password': password,
+  Future<Token> getToken(String username, String password, int idOrg, BuildContext context) async { // Sends credentials to the API and receives a JWT
+    _postBody = jsonEncode(<String, dynamic>{
+      'NombreUsuario': username,
+      'Clave': password,
+      'IdOrganizacion': idOrg
     });
 
     print(_postBody);

@@ -7,6 +7,7 @@ class Token {
   int idRol;
   String ultimoLogin;
   int idOrganizacion;
+  String? descUsuario;
   
   Token({
     required this.token,
@@ -16,6 +17,7 @@ class Token {
     required this.idRol,
     required this.ultimoLogin,
     required this.idOrganizacion,
+    this.descUsuario,
   });
 
   factory Token.fromJson(Map<String, dynamic> json) => Token(
@@ -26,5 +28,6 @@ class Token {
     idRol: json["IdRol"],
     ultimoLogin: json["UltimoLogin"],
     idOrganizacion: json["IdOrganizacion"],
+    descUsuario: json["DescUsuario"]
   );
 }

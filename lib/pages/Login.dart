@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    version = VersionRepository(baseUrl: baseUrl).getVersion(context);
+    version = VersionRepository(baseUrl: baseUrl).getVersion('ApiLogistica', context);
   }
 
   @override
@@ -103,14 +103,14 @@ class _LoginState extends State<Login> {
                                 String password = Encode().hash256(rawPassword);
 
                                 token = TokenRepository(baseUrl: baseUrl)
-                                    .getToken(username, password, context);
+                                    .getToken(username, password, 1, context);
 
                                 token.then((value) {
                                   if (value.idRol == 2) {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => ListaEnvios(token: value.token, username: value.usuario, baseUrl: baseUrl,)
+                                          builder: (context) => ListaEnvios(token: value.token, username: value.usuario, descUsuario: value.descUsuario, baseUrl: baseUrl,)
                                     ));
                                   } else {
                                     MyDialog(
