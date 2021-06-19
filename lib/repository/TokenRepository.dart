@@ -31,4 +31,19 @@ class TokenRepository {
     final response = await _helper.post('/api/Token/Get', 'token', _postBody, context);
     return Token.fromJson(response);
   }
+
+  Future<bool> isTokenExpired(String token, BuildContext context) async {
+
+    final bool response = await _helper.get('/api/Token/Verify', token, 'isTokenExpired', context);
+
+    print(response);
+
+    return response;
+  }
+
+  Future<Token> renewToken(String token, BuildContext context) async {
+
+    final response = await _helper.get('/api/Token/Renew', token, 'renewToken', context);
+    return Token.fromJson(response);
+  }
 }

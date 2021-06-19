@@ -18,11 +18,8 @@ class VersionRepository {
   late ApiBaseHelper _helper = ApiBaseHelper(baseUrl: baseUrl);
 
   Future<Version> getVersion(String component, BuildContext context) async { // Gets Version from the API
-    final params = {
-      'Componente':'ApiLogistica'
-    };
 
-    final response = await _helper.get('/api/Version/Get?Componente=$component', null, params, context);
+    final response = await _helper.get('/api/Version/Get?Componente=$component', null, null, context);
     return Version.fromJson(response);
   }
 }

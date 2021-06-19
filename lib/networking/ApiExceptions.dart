@@ -1,32 +1,33 @@
 class ApiException implements Exception {
   final _message;
   final _prefix;
+  final code;
   
   ApiException([
-    this._message, this._prefix
+    this._message, this._prefix, this.code
   ]);
 
   String toString() {
-    return "$_prefix$_message";
+    return "$code $_prefix$_message";
   }
 }
 
 class FetchDataException extends ApiException {
-  FetchDataException([String? message]) : super(message, "Error During Communication: ");
+  FetchDataException([String? message, code]) : super(message, "Error During Communication: ", code);
 }
 
 class BadRequestException extends ApiException {
-  BadRequestException([message]) : super(message, "Invalid Request: ");
+  BadRequestException([message, code]) : super(message, "Invalid Request: ", code);
 }
 
 class UnauthorizedException extends ApiException {
-  UnauthorizedException([message]) : super(message, "Unauthorized: ");
+  UnauthorizedException([message, code]) : super(message, "Unauthorized: ", code);
 }
 
 class InternalServerException extends ApiException {
-  InternalServerException([message]) : super(message, "Internal Server Error: ");
+  InternalServerException([message, code]) : super(message, "Internal Server Error: ", code);
 }
 
 class InvalidInputException extends ApiException {
-  InvalidInputException([String? message]) : super(message, "Invalid Input: ");
+  InvalidInputException([String? message, code]) : super(message, "Invalid Input: ", code);
 }

@@ -12,18 +12,19 @@ class ApiBaseHelper {
 
   ApiBaseHelper({required this.baseUrl});
 
-  Future<dynamic> get(String endpoint, String? token, queryParameter,BuildContext context) async {
+  Future<dynamic> get(String endpoint, String? token, String? identifier, BuildContext context) async {
     print('[GET] $endpoint');
     var responseJson;
     try {
       if (token != null) {
         final response = await http.get(
-          Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParameter),
+          Uri.parse('$baseUrl$endpoint'),
           headers: {
             HttpHeaders.authorizationHeader: 'Bearer $token',
           },
         );
-        responseJson = _returnResponse(response, null, context);
+
+        responseJson = _returnResponse(response, identifier, context);
       } else {
         final response = await http.get(
           Uri.parse('$baseUrl$endpoint'),
@@ -69,8 +70,16 @@ class ApiBaseHelper {
     return responseJson;
   }
 
-  dynamic _returnResponse(
-      http.Response response, String? identifier, BuildContext context) {
+  dynamic _returnResponse(http.Response response, String? identifier, BuildContext context) {
+    if (identifier == 'isTokenExpired') {
+      if (response.statusCode == 200) {
+        return false;
+      } else {
+        return true;
+      }
+      
+    }
+
     switch (response.statusCode) {
       case 200:
         String stringResponse = Utf8Decoder().convert(response.bodyBytes);
@@ -82,17 +91,26 @@ class ApiBaseHelper {
         return responseJson;
 
       case 400:
-        throw BadRequestException(response.body.toString());
+        throw BadRequestException(response.body.toString(), 400);
       case 401:
         if (identifier == 'token') {
           MyDialog(
-              context: context,
-              alertTitle: 'Inicio de sesión fallido',
-              alertContent: 'Usuario y/o Contraseña incorrectos',
-              buttonText: 'Ok',
-              buttonAction: () => Phoenix.rebirth(context)).createDialog();
-        } else if (identifier == 'envios') {}
-        throw UnauthorizedException(response.body.toString());
+            context: context,
+            alertTitle: 'Inicio de sesión fallido',
+            alertContent: 'Usuario y/o Contraseña incorrectos',
+            buttonText: 'Ok',
+            buttonAction: () => Phoenix.rebirth(context)
+          ).createDialog();
+        } else if (identifier == 'envios') {
+          // MyDialog(
+          //   context: context,
+          //   alertTitle: 'Sesión caducada',
+          //   alertContent: 'La sesión en la que estaba ha caducado.\nPara continuar, vuelva a iniciar sesion',
+          //   buttonText: 'Ok',
+          //   buttonAction: () => Navigator.pop(context)
+          // ).createDialog();
+        }
+        throw UnauthorizedException('Failed to authenticate', 401);
       case 500:
         MyDialog(
             context: context,
@@ -101,10 +119,10 @@ class ApiBaseHelper {
                 'Se produjo un error en el servidor,\nasegúrese de tener una conexión\nestable a internet.\nVuelva a intentar más tarde',
             buttonText: 'Reiniciar Aplicación',
             buttonAction: () => Phoenix.rebirth(context)).createDialog();
-        throw InternalServerException(response.body.toString());
+        throw InternalServerException(response.body.toString(), 500);
       default:
         throw FetchDataException(
-            'Error occured while Communication with Server with StatusCode : ${response.statusCode}');
+            'Error occured while Communication with Server with StatusCode : ${response.statusCode}', 500);
     }
   }
 }

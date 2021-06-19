@@ -28,6 +28,7 @@ dependencies:
   flutter_svg: ^0.22.0
   crypto: ^3.0.1
   intl: ^0.17.0
+  fading_edge_scrollview: ^2.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

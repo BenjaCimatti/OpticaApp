@@ -24,7 +24,7 @@ class EnvioRepository {
 
   Future<List<Envio>> getEnvio(String token, BuildContext context) async {
     
-    final response = await _helper.get('/api/Envios/Get', token, null, context);
+    final response = await _helper.get('/api/Envios/Get', token, 'envios', context);
     final envios = enviosFromJson(jsonEncode(response));
     return envios;
   }

@@ -1,22 +1,22 @@
 class Token {
     
   String token;
-  String usuario;
+  String? usuario;
   int? idTransportista;
   int? idCliente;
-  int idRol;
-  String ultimoLogin;
-  int idOrganizacion;
+  int? idRol;
+  String? ultimoLogin;
+  int? idOrganizacion;
   String? descUsuario;
   
   Token({
     required this.token,
-    required this.usuario,
+    this.usuario,
     this.idTransportista,
     this.idCliente,
-    required this.idRol,
-    required this.ultimoLogin,
-    required this.idOrganizacion,
+    this.idRol,
+    this.ultimoLogin,
+    this.idOrganizacion,
     this.descUsuario,
   });
 

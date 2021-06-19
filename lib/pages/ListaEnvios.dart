@@ -1,21 +1,27 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:optica/classes/ColorPalette.dart';
 import 'package:optica/models/Envio.dart';
+import 'package:optica/models/Token.dart';
 import 'package:optica/repository/EnvioRepository.dart';
+import 'package:optica/repository/TokenRepository.dart';
+import 'package:optica/widgets/NoData.dart';
 import 'dart:math' as math;
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
+import 'package:optica/widgets/TrailingIcon.dart';
 
 // ignore: must_be_immutable
 class ListaEnvios extends StatefulWidget {
 
   String token;
-  String username;
+  String? username;
   String? descUsuario;
   String baseUrl;
 
   ListaEnvios({
     required this.token,
-    required this.username,
+    this.username,
     this.descUsuario,
     required this.baseUrl,
   });
@@ -27,8 +33,12 @@ class ListaEnvios extends StatefulWidget {
 class _ListaEnviosState extends State<ListaEnvios> {
 
   late Future<List<Envio>> envio;
+  late Future<bool> isExpired;
+  late Future<Token> renewedToken;
 
   final _markedEnvios = <Envio>[];
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -41,17 +51,15 @@ class _ListaEnviosState extends State<ListaEnvios> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
-    
-    
-
     return Scaffold(
       floatingActionButton:
         FloatingActionButton(
           onPressed: (){
             setState(() {
-              _markedEnvios.forEach((element) {
-                print(element.descCliente);
-                print(element.idEnvio);
+              _verifyToken(() {
+                _markedEnvios.forEach((element) {
+                  print('Cliente: ${element.descCliente}\nId de envio: ${element.idEnvio}');
+                });
               });
             });
           },
@@ -78,7 +86,6 @@ class _ListaEnviosState extends State<ListaEnvios> {
               ),
               child: ListTile(
                 isThreeLine: true,
-                //visualDensity: ,
                 title: Text(
                   'Envíos',
                   style: TextStyle(
@@ -104,11 +111,7 @@ class _ListaEnviosState extends State<ListaEnvios> {
                 trailing: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.local_shipping_rounded,
-                      color: ColorPalette().getLightGreen(),
-                      size: height * 0.083,
-                    ),
+                    SvgPicture.asset('assets/svg/Logo.svg')
                   ],
                 ),
               ),
@@ -121,18 +124,39 @@ class _ListaEnviosState extends State<ListaEnvios> {
                   lista = snapshot.data!.toList();
 
                   return Expanded(
-                    //flex: 4,
-                    child: Container(
-                      child: ListView.builder(
+                    child: FadingEdgeScrollView.fromScrollView(
+                      gradientFractionOnEnd: 0.06,
+                      gradientFractionOnStart: 0.06,
+                      child: CustomScrollView(
+                        controller: _scrollController,
                         physics: BouncingScrollPhysics(),
-                        itemCount: lista.length,
-                        itemBuilder: (context, index) {
-                          return _createListTile(lista[index]);
-                        }
+                        slivers: [
+                          CupertinoSliverRefreshControl(onRefresh: _loadEnvios,),
+                          SliverToBoxAdapter(
+                            child: ListView.builder(
+                              padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
+                              shrinkWrap: true,
+                              primary: false,
+                              itemCount: lista.length,
+                              itemBuilder: (context, index) {
+                                return _createListTile(lista[index]);
+                              }
+                            ),
+                          ),
+                        ]
                       ),
-                    ),
+                    )
                   );
 
+                } else if (snapshot.hasError) {
+                  var error = snapshot.error;
+
+                  if(error!.toString().contains('401')) {
+                    // 
+                  }
+                  
+                  
+                  return Container();
                 } else {
                   return NoData(width: width, height: height);
                 }
@@ -144,7 +168,7 @@ class _ListaEnviosState extends State<ListaEnvios> {
     );
   }
 
-  _createListTile(Envio envio) {
+  Widget _createListTile(Envio envio) {
     final bool alreadyMarked = _markedEnvios.contains(envio);
 
     return Padding(
@@ -186,75 +210,36 @@ class _ListaEnviosState extends State<ListaEnvios> {
       ),
     );
   }
-}
 
-class NoData extends StatelessWidget {
-  const NoData({
-    Key? key,
-    required this.width,
-    required this.height,
-  }) : super(key: key);
-
-  final double width;
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: width * 0.13),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/svg/NoData.svg',
-              placeholderBuilder: (context) {
-                return Center(
-                    child: CircularProgressIndicator(
-                      valueColor: new AlwaysStoppedAnimation<Color>(ColorPalette().getLightGreen()),
-                    ),
-                  );
-              }
-            ),
-            SizedBox(
-              height: height * 0.1,
-            )
-          ],
-        ),
-      ),
-    );
+  Future<void> _loadEnvios() async {
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {
+      _verifyToken(() {
+        envio = EnvioRepository(baseUrl: widget.baseUrl).getEnvio(widget.token, context);
+      });
+    });
   }
-}
 
-class TrailingIcon extends StatelessWidget {
-  TrailingIcon({
-    Key? key,
-    required this.color,
-  }) : super(key: key);
+  void _verifyToken(void Function() functionality) {
+      isExpired = TokenRepository(baseUrl: widget.baseUrl).isTokenExpired(widget.token, context);
 
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            
-            decoration: BoxDecoration(
-              color: ColorPalette().getBluishGrey(),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: ColorPalette().getLightGreen(),
-                width: 2
-
-              )
-            ),
-            child: Icon(Icons.check_circle_rounded, color: color,),
-          )
-        ],
-      ),
-    );
+      isExpired.then((value) {
+        if (value == false) {
+          print('token no expirado');
+          // funcionalidad
+          functionality();
+        } else {
+          print('token expirado');
+          renewedToken = TokenRepository(baseUrl: widget.baseUrl).renewToken(widget.token, context);
+          
+          renewedToken.then((value) {
+            print(widget.token);
+            widget.token = value.token;
+            print(widget.token);
+            functionality();
+          });
+        }
+      });
   }
+
 }
