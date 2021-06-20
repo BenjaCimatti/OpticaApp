@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Sistema Seguimiento Logistica</title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="@Url.Content("~/Content/plugins/morris.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/font-awesome-4.1.0/css/font-awesome.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/navbar.css")" rel="stylesheet" type="text/css" />
+</head>
+
+<body>   
+    <div id="wrapper">
+        @Html.Action("Navbar", "Navbar", new { controller = ViewContext.RouteData.Values["Controller"].ToString(), action = ViewContext.RouteData.Values["Action"].ToString() })
+
+        <div id="page-wrapper">           
+            @RenderBody()
+        </div>
+    </div>
+    <!-- /#wrapper -->
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("enviosDataTable",false/*required*/)
+    
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+

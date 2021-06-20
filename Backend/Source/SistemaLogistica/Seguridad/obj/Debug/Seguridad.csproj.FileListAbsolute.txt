@@ -1,0 +1,15 @@
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\bin\Debug\Seguridad.dll
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\bin\Debug\Seguridad.pdb
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\bin\Debug\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\bin\Debug\Microsoft.IdentityModel.Logging.dll
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\bin\Debug\Microsoft.IdentityModel.Tokens.dll
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\bin\Debug\System.IdentityModel.Tokens.Jwt.dll
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\bin\Debug\Microsoft.IdentityModel.JsonWebTokens.xml
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\bin\Debug\Microsoft.IdentityModel.Logging.xml
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\bin\Debug\Microsoft.IdentityModel.Tokens.xml
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\bin\Debug\System.IdentityModel.Tokens.Jwt.xml
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\obj\Debug\Seguridad.csprojAssemblyReference.cache
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\obj\Debug\Seguridad.csproj.CoreCompileInputs.cache
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\obj\Debug\Seguridad.csproj.CopyComplete
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\obj\Debug\Seguridad.dll
+C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Seguridad\obj\Debug\Seguridad.pdb
