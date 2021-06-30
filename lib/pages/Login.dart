@@ -1,15 +1,17 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:optica/classes/ColorPalette.dart';
 import 'package:optica/classes/Encode.dart';
+import 'package:optica/classes/Location.dart';
 import 'package:optica/models/Token.dart';
 import 'package:optica/models/Version.dart';
 import 'package:optica/pages/ListaEnvios.dart';
 import 'package:optica/repository/TokenRepository.dart';
 import 'package:optica/widgets/LoginShapes.dart';
 import 'package:optica/widgets/LoginTextField.dart';
-import 'package:optica/widgets/MyDialog.dart';
+import 'package:optica/widgets/MyAlertDialog.dart';
 import 'package:optica/repository/VersionRepository.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -21,8 +23,9 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   late Future<Version> version;
   late Future<Token> token;
+  late Future<Position> position;
 
-  static const String baseUrl = 'http://10.0.0.5:8088';
+  static const String baseUrl = 'http://10.0.0.4:8081';
 
   static const String deviceVersion = '1.0.0';
   late String _latestVersion;
@@ -30,11 +33,14 @@ class _LoginState extends State<Login> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     version = VersionRepository(baseUrl: baseUrl).getVersion('ApiLogistica', context);
+    position = determinePosition(context);
+    position.then((value) => print(value));
   }
 
   @override
@@ -93,7 +99,7 @@ class _LoginState extends State<Login> {
                       Padding(
                         padding: EdgeInsets.only(top: height * 0.02),
                         child: Center(
-                          child: ElevatedButton(
+                          child: !isLoading ? ElevatedButton(
                             onPressed: () {
                               setState(() {
 
@@ -123,6 +129,7 @@ class _LoginState extends State<Login> {
                                             context)).createDialog();
                                   }
                                 });
+                                isLoading = !isLoading;
                               });
                             },
                             child: Text(
@@ -152,7 +159,8 @@ class _LoginState extends State<Login> {
                                 ),
                               ),
                             ),
-                          ),
+                          )
+                          : Center(child:CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(ColorPalette().getLightGreen()),)) 
                         ),
                       ),
                     ],

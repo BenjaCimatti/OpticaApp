@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:optica/classes/ColorPalette.dart';
+import 'package:optica/classes/Location.dart';
 import 'package:optica/models/Envio.dart';
 import 'package:optica/models/Token.dart';
+import 'package:optica/repository/EnvioConfirmadoRepository.dart';
 import 'package:optica/repository/EnvioRepository.dart';
 import 'package:optica/repository/TokenRepository.dart';
+import 'package:optica/widgets/MyAlertDialog.dart';
+import 'package:optica/widgets/MyConfirmationDialog.dart';
 import 'package:optica/widgets/NoData.dart';
 import 'dart:math' as math;
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
@@ -35,7 +40,10 @@ class _ListaEnviosState extends State<ListaEnvios> {
   late Future<List<Envio>> envio;
   late Future<bool> isExpired;
   late Future<Token> renewedToken;
+  late Future<int> confirmedEnvio;
+  late Future<Position> position;
 
+  late List<Envio> lista;
   final _markedEnvios = <Envio>[];
 
   final ScrollController _scrollController = ScrollController();
@@ -55,13 +63,27 @@ class _ListaEnviosState extends State<ListaEnvios> {
       floatingActionButton:
         FloatingActionButton(
           onPressed: (){
-            setState(() {
-              _verifyToken(() {
-                _markedEnvios.forEach((element) {
-                  print('Cliente: ${element.descCliente}\nId de envio: ${element.idEnvio}');
-                });
-              });
-            });
+            if (_markedEnvios.length > 0) {
+              print('envios mayor a 0');
+              MyConfirmationDialog(
+                context: context,
+                alertTitle: 'Confirmación de envío',
+                alertContent: alertContent(),
+                buttonText1: 'CANCELAR',
+                buttonText2: 'CONFIRMAR',
+                buttonAction1: () => Navigator.pop(context),
+                buttonAction2: () => _confirmEnvio(context)
+              ).createDialog();
+            } else {
+              print('no hay envios');
+              MyDialog(
+                context: context,
+                alertTitle: 'Ningún envío seleccionado',
+                alertContent: 'Por favor, seleccione los\nenvios que desee marcar\ncomo completado',
+                buttonText: 'Ok',
+                buttonAction: () => Navigator.pop(context)
+              ).createDialog();
+            }
           },
           backgroundColor: ColorPalette().getLightGreen(),
           elevation: 0,
@@ -120,7 +142,6 @@ class _ListaEnviosState extends State<ListaEnvios> {
               future: envio,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  List<Envio> lista;
                   lista = snapshot.data!.toList();
 
                   return Expanded(
@@ -147,16 +168,6 @@ class _ListaEnviosState extends State<ListaEnvios> {
                       ),
                     )
                   );
-
-                } else if (snapshot.hasError) {
-                  var error = snapshot.error;
-
-                  if(error!.toString().contains('401')) {
-                    // 
-                  }
-                  
-                  
-                  return Container();
                 } else {
                   return NoData(width: width, height: height);
                 }
@@ -166,6 +177,32 @@ class _ListaEnviosState extends State<ListaEnvios> {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmEnvio(BuildContext context) async {
+    _verifyToken(() {
+      print('Envios marcados restantes: $_markedEnvios');
+      position = determinePosition(context);
+      position.then((location) {
+        var lat = location.latitude;
+        var long = location.longitude;
+        var length = _markedEnvios.length;
+
+        for (var i = 0; i < length; i++) {
+          Envio element = _markedEnvios[0];
+          print(element.idEnvio);
+          confirmedEnvio = EnvioConfirmadoRepository(baseUrl: widget.baseUrl).confirmEnvio(element.idEnvio, lat, long, widget.token, context);
+          _markedEnvios.remove(element);
+          print('Envios marcados restantes: $_markedEnvios');
+          if (_markedEnvios.length == 0) {
+            confirmedEnvio.then((value) {
+              envio = EnvioRepository(baseUrl: widget.baseUrl).getEnvio(widget.token, context);
+              setState(() {});
+            });
+          }
+        }
+      });
+    });
   }
 
   Widget _createListTile(Envio envio) {
@@ -178,8 +215,7 @@ class _ListaEnviosState extends State<ListaEnvios> {
         color: ColorPalette().getLightBlueishGrey(),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: ListTile(
-          trailing: alreadyMarked ? 
-            TrailingIcon(color: ColorPalette().getLightGreen()) : TrailingIcon(color: Colors.black.withOpacity(0),),
+          trailing: alreadyMarked ? TrailingIcon(color: ColorPalette().getLightGreen()) : TrailingIcon(color: Colors.black.withOpacity(0),),
           isThreeLine: true,
           title: Text(
             envio.descCliente,
@@ -212,34 +248,42 @@ class _ListaEnviosState extends State<ListaEnvios> {
   }
 
   Future<void> _loadEnvios() async {
-    await Future.delayed(Duration(seconds: 2));
-    setState(() {
-      _verifyToken(() {
-        envio = EnvioRepository(baseUrl: widget.baseUrl).getEnvio(widget.token, context);
-      });
+    await Future.delayed(Duration(seconds: 2));  
+    _verifyToken(() {
+      envio = EnvioRepository(baseUrl: widget.baseUrl).getEnvio(widget.token, context);
+      setState(() {});
     });
   }
 
-  void _verifyToken(void Function() functionality) {
-      isExpired = TokenRepository(baseUrl: widget.baseUrl).isTokenExpired(widget.token, context);
+  Future<void> _verifyToken(void Function() functionality) async {
+    isExpired = TokenRepository(baseUrl: widget.baseUrl).isTokenExpired(widget.token, context);
 
-      isExpired.then((value) {
-        if (value == false) {
-          print('token no expirado');
-          // funcionalidad
+    isExpired.then((value) {
+      if (value == false) {
+        print('token no expirado');
+        // funcionalidad
+        functionality();        
+      } else {
+        print('token expirado');
+        renewedToken = TokenRepository(baseUrl: widget.baseUrl).renewToken(widget.token, context);
+        renewedToken.then((value) {
+          print(widget.token);
+          widget.token = value.token;
+          print(widget.token);
           functionality();
-        } else {
-          print('token expirado');
-          renewedToken = TokenRepository(baseUrl: widget.baseUrl).renewToken(widget.token, context);
-          
-          renewedToken.then((value) {
-            print(widget.token);
-            widget.token = value.token;
-            print(widget.token);
-            functionality();
-          });
-        }
-      });
+        });
+      }
+    });
+  }
+
+  String alertContent() {
+    String enviosId = 'Se confirmarán los siguientes envíos:';
+
+    _markedEnvios.forEach((element) {
+      enviosId += '\n${element.idEnvio} - ${element.descCliente}';
+    });
+
+    return enviosId;
   }
 
 }

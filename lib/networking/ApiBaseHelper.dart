@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:http/http.dart' as http;
-import 'package:optica/widgets/MyDialog.dart';
+import 'package:optica/widgets/MyAlertDialog.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'ApiExceptions.dart';
@@ -21,6 +21,7 @@ class ApiBaseHelper {
           Uri.parse('$baseUrl$endpoint'),
           headers: {
             HttpHeaders.authorizationHeader: 'Bearer $token',
+            HttpHeaders.acceptHeader: 'application/json',
           },
         );
 
@@ -28,27 +29,41 @@ class ApiBaseHelper {
       } else {
         final response = await http.get(
           Uri.parse('$baseUrl$endpoint'),
+          headers: {
+            HttpHeaders.acceptHeader: 'application/json',
+          }
         );
         responseJson = _returnResponse(response, null, context);
       }
     } on SocketException {
       MyDialog(
-          context: context,
-          alertTitle: 'Conexión Fallida',
-          alertContent: 'Por favor, revise su conexión\na internet',
-          buttonText: 'Reiniciar Aplicación',
-          buttonAction: () => Phoenix.rebirth(context)).createDialog();
+        context: context,
+        alertTitle: 'Conexión Fallida',
+        alertContent: 'Por favor, revise su conexión\na internet',
+        buttonText: 'Ok',
+        buttonAction: () => Navigator.pop(context)
+      ).createDialog();
       throw FetchDataException('No Internet connection');
     }
     print('GET Recieved!');
     return responseJson;
   }
 
-  Future<dynamic> post(String endpoint, String? identifier, String postBody,
-      BuildContext context) async {
+  Future<dynamic> post(String endpoint, String? identifier, String? token, String postBody, BuildContext context) async {
     print('[POST] $endpoint');
     var responseJson;
     try {
+      if(token != null) {
+        final response = await http.post(
+          Uri.parse('$baseUrl$endpoint'),
+          body: postBody,
+          headers: {
+            HttpHeaders.authorizationHeader : 'Bearer $token',
+            HttpHeaders.contentTypeHeader : 'application/json',
+          }
+        );
+        responseJson = _returnResponse(response, identifier, context);
+      } else {
       final response = await http.post(
         Uri.parse('$baseUrl$endpoint'),
         body: postBody,
@@ -57,13 +72,16 @@ class ApiBaseHelper {
         }
       );
       responseJson = _returnResponse(response, identifier, context);
+      }
+      
     } on SocketException {
       MyDialog(
-          context: context,
-          alertTitle: 'Conexión Fallida',
-          alertContent: 'Por favor, revise su conexión\na internet',
-          buttonText: 'Reiniciar Aplicación',
-          buttonAction: () => Phoenix.rebirth(context)).createDialog();
+        context: context,
+        alertTitle: 'Conexión Fallida',
+        alertContent: 'Por favor, revise su conexión\na internet',
+        buttonText: 'Ok',
+        buttonAction: () => Navigator.pop(context)
+      ).createDialog();
       throw FetchDataException('No Internet Connection');
     }
     print('POST Recieved!');
@@ -82,11 +100,17 @@ class ApiBaseHelper {
 
     switch (response.statusCode) {
       case 200:
+        if (identifier == 'confirmEnvio') {
+          return 200;
+        }
         String stringResponse = Utf8Decoder().convert(response.bodyBytes);
         var responseJson = jsonDecode(stringResponse);
         print(responseJson);
         return responseJson;
       case 204:
+        if (identifier == 'confirmEnvio') {
+          return 204;
+        }
         var responseJson = jsonDecode(response.body);
         return responseJson;
 
@@ -113,12 +137,13 @@ class ApiBaseHelper {
         throw UnauthorizedException('Failed to authenticate', 401);
       case 500:
         MyDialog(
-            context: context,
-            alertTitle: 'Error Interno del Servidor',
-            alertContent:
-                'Se produjo un error en el servidor,\nasegúrese de tener una conexión\nestable a internet.\nVuelva a intentar más tarde',
-            buttonText: 'Reiniciar Aplicación',
-            buttonAction: () => Phoenix.rebirth(context)).createDialog();
+          context: context,
+          alertTitle: 'Error Interno del Servidor',
+          alertContent:
+              'Se produjo un error en el servidor,\nasegúrese de tener una conexión\nestable a internet.\nVuelva a intentar más tarde',
+          buttonText: 'Ok',
+          buttonAction: () => Navigator.pop(context)
+        ).createDialog();
         throw InternalServerException(response.body.toString(), 500);
       default:
         throw FetchDataException(

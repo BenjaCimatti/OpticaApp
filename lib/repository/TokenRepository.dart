@@ -28,7 +28,7 @@ class TokenRepository {
 
     print(_postBody);
     
-    final response = await _helper.post('/api/Token/Get', 'token', _postBody, context);
+    final response = await _helper.post('/api/Token/Get', 'token', null, _postBody, context);
     return Token.fromJson(response);
   }
 

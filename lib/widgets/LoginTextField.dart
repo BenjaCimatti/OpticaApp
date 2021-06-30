@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:optica/classes/ColorPalette.dart';
 
 class LoginTextField extends StatefulWidget {
 
@@ -31,6 +32,7 @@ class _LoginTextFieldState extends State<LoginTextField> {
       margin: EdgeInsets.fromLTRB(width*0.0864, 0, width*0.0864, height*0.0205),
       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
       child: TextField(
+        cursorColor: ColorPalette().getLightGreen(),
         obscureText: widget.obscureText,
         controller: widget.controller,
         decoration: InputDecoration(
