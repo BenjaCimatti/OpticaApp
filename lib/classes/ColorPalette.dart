@@ -6,10 +6,12 @@ class ColorPalette {
   static const _bluishGrey = Color(0xff4e5c72);
   static const _darkBlueishGrey = Color(0xff424e61);
   static const _lightBlueishGrey = Color(0xff5e708c);
+  static const _pastelRed = Color(0xffff5e5e);
 
   getLightBlue() => _lightBlue;
   getLightGreen() => _lightGreen;
   getBluishGrey() => _bluishGrey;
   getLightBlueishGrey() => _lightBlueishGrey;
   getDarkBlueishGrey() => _darkBlueishGrey;
+  getPastelRed() => _pastelRed;
 }

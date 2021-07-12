@@ -59,121 +59,142 @@ class _ListaEnviosState extends State<ListaEnvios> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      floatingActionButton:
-        FloatingActionButton(
-          onPressed: (){
-            if (_markedEnvios.length > 0) {
-              print('envios mayor a 0');
-              MyConfirmationDialog(
-                context: context,
-                alertTitle: 'Confirmación de envío',
-                alertContent: alertContent(),
-                buttonText1: 'CANCELAR',
-                buttonText2: 'CONFIRMAR',
-                buttonAction1: () => Navigator.pop(context),
-                buttonAction2: () => _confirmEnvio(context)
-              ).createDialog();
-            } else {
-              print('no hay envios');
-              MyDialog(
-                context: context,
-                alertTitle: 'Ningún envío seleccionado',
-                alertContent: 'Por favor, seleccione los\nenvios que desee marcar\ncomo completado',
-                buttonText: 'Ok',
-                buttonAction: () => Navigator.pop(context)
-              ).createDialog();
-            }
-          },
-          backgroundColor: ColorPalette().getLightGreen(),
-          elevation: 0,
-          child: Icon(Icons.local_shipping_rounded),
-        ),
-
-      backgroundColor: ColorPalette().getBluishGrey(),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.only(bottom: 14, top: 0),
-              decoration: BoxDecoration(
-                color: ColorPalette().getBluishGrey(),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                    blurRadius: 10,
-                    offset: Offset.fromDirection(math.pi/2, -9)
-                  )
-                ]
+    return WillPopScope(
+      onWillPop: () {
+        return new Future(() => false);
+      },
+      child: Scaffold(
+        floatingActionButton:
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FloatingActionButton(
+                onPressed: () {},
+                backgroundColor: ColorPalette().getPastelRed(),
+                elevation: 1,
+                child: Icon(Icons.error_outline),
               ),
-              child: ListTile(
-                isThreeLine: true,
-                title: Text(
-                  'Envíos',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: height * 0.07,
-                  ),
+              SizedBox(
+                height: 10,
+              ),
+              FloatingActionButton(
+                onPressed: (){
+                  if (_markedEnvios.length > 0) {
+                    print('envios mayor a 0');
+                    MyConfirmationDialog(
+                      context: context,
+                      alertTitle: 'Confirmación de envío',
+                      alertContent: alertContent(),
+                      buttonText1: 'CANCELAR',
+                      buttonText2: 'CONFIRMAR',
+                      buttonAction1: () => Navigator.pop(context),
+                      buttonAction2: () => _confirmEnvio(context)
+                    ).createDialog();
+                  } else {
+                    print('no hay envios');
+                    MyDialog(
+                      context: context,
+                      alertTitle: 'Ningún envío seleccionado',
+                      alertContent: 'Por favor, seleccione los\nenvios que desee marcar\ncomo completado',
+                      buttonText: 'Ok',
+                      buttonAction: () => Navigator.pop(context)
+                    ).createDialog();
+                  }
+                },
+                backgroundColor: ColorPalette().getLightGreen(),
+                elevation: 1,
+                child: Icon(Icons.local_shipping_rounded),
+              ),
+            ],
+          ),
+
+        backgroundColor: ColorPalette().getBluishGrey(),
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.only(bottom: 14, top: 0),
+                decoration: BoxDecoration(
+                  color: ColorPalette().getBluishGrey(),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      blurRadius: 10,
+                      offset: Offset.fromDirection(math.pi/2, -9)
+                    )
+                  ]
                 ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(left: 2.1),
-                  child: Text(
-                    '${widget.descUsuario}\n${widget.username}',
+                child: ListTile(
+                  isThreeLine: true,
+                  title: Text(
+                    'Envíos',
                     style: TextStyle(
-                      height: 1.1,
                       fontFamily: 'Poppins',
-                      color: Colors.white.withOpacity(0.5),
-                      fontWeight: FontWeight.w300,
-                      fontSize: height * 0.03,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: height * 0.07,
                     ),
                   ),
-                ),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset('assets/svg/Logo.svg')
-                  ],
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(left: 2.1),
+                    child: Text(
+                      '${widget.descUsuario}\n${widget.username}',
+                      style: TextStyle(
+                        height: 1.1,
+                        fontFamily: 'Poppins',
+                        color: Colors.white.withOpacity(0.5),
+                        fontWeight: FontWeight.w300,
+                        fontSize: height * 0.03,
+                      ),
+                    ),
+                  ),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset('assets/svg/Logo.svg')
+                    ],
+                  ),
                 ),
               ),
-            ),
-            FutureBuilder<List<Envio>>(
-              future: envio,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  lista = snapshot.data!.toList();
+              FutureBuilder<List<Envio>>(
+                future: envio,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    lista = snapshot.data!.toList();
 
-                  return Expanded(
-                    child: FadingEdgeScrollView.fromScrollView(
-                      gradientFractionOnEnd: 0.06,
-                      gradientFractionOnStart: 0.06,
-                      child: CustomScrollView(
-                        controller: _scrollController,
-                        physics: BouncingScrollPhysics(),
-                        slivers: [
-                          CupertinoSliverRefreshControl(onRefresh: _loadEnvios,),
-                          SliverToBoxAdapter(
-                            child: ListView.builder(
-                              padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
-                              shrinkWrap: true,
-                              primary: false,
-                              itemCount: lista.length,
-                              itemBuilder: (context, index) {
-                                return _createListTile(lista[index]);
-                              }
-                            ),
+                    return Expanded(
+                      child: FadingEdgeScrollView.fromScrollView(
+                        gradientFractionOnEnd: 0.06,
+                        gradientFractionOnStart: 0.06,
+                        child: CustomScrollView(
+                          controller: _scrollController,
+                          physics: AlwaysScrollableScrollPhysics(
+                            parent: BouncingScrollPhysics()
                           ),
-                        ]
-                      ),
-                    )
-                  );
-                } else {
-                  return NoData(width: width, height: height);
+                          slivers: [
+                            CupertinoSliverRefreshControl(onRefresh: _loadEnvios,),
+                            SliverToBoxAdapter(
+                              child: ListView.builder(
+                                padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
+                                shrinkWrap: true,
+                                primary: false,
+                                itemCount: lista.length,
+                                itemBuilder: (context, index) {
+                                  return _createListTile(lista[index]);
+                                }
+                              ),
+                            ),
+                          ]
+                        ),
+                      )
+                    );
+                  } else {
+                    return NoData(width: width, height: height);
+                  }
                 }
-              }
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -226,13 +247,22 @@ class _ListaEnviosState extends State<ListaEnvios> {
             ),
           ),
           subtitle: Text(
-            'Id de envío: ${envio.idEnvio}\nFecha de carga: ${envio.fechaCarga}',
+            'Id de envío: ${envio.idEnvio}\nFecha de carga: ${envio.fechaCarga}\nFecha de envío: ${envio.fechaEnvio}',
             style: TextStyle(
               color: ColorPalette().getLightBlue(),
               fontWeight: FontWeight.w600
             ),
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          onLongPress: () {
+            MyDialog(
+              context: context,
+              alertTitle: 'Observaciones Envío ${envio.idEnvio}',
+              alertContent: '${envio.observaciones}',
+              buttonText: 'Ok',
+              buttonAction: () => Navigator.pop(context)
+            ).createDialog();
+          },
           onTap: () {
             setState(() {
             if(alreadyMarked) {

@@ -9,11 +9,12 @@ class Envio {
   int idTransportista;
   String descTransportista;
   String fechaCarga;
-  dynamic? fechaEnvio;
+  String fechaEnvio;
   int idEstado;
   String descEstado;
   dynamic? geoLatitud;
   dynamic? geoLongitud;
+  String observaciones;
 
   Envio({
       required this.idEnvio,
@@ -22,11 +23,12 @@ class Envio {
       required this.idTransportista,
       required this.descTransportista,
       required this.fechaCarga,
-      this.fechaEnvio,
+      required this.fechaEnvio,
       required this.idEstado,
       required this.descEstado,
       this.geoLatitud,
       this.geoLongitud,
+      required this.observaciones,
   });
 
 
@@ -38,10 +40,11 @@ class Envio {
       idTransportista: json["IdTransportista"],
       descTransportista: json["DescTransportista"],
       fechaCarga: formatDate((json["FechaCarga"])),
-      fechaEnvio: json["FechaEnvio"],
+      fechaEnvio: formatDate((json["FechaEnvio"])),
       idEstado: json["IdEstado"],
       descEstado: json["DescEstado"],
       geoLatitud: json["GeoLatitud"],
       geoLongitud: json["GeoLongitud"],
+      observaciones: json["Observaciones"],
   );
 }

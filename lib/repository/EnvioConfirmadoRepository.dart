@@ -20,13 +20,6 @@ class EnvioConfirmadoRepository {
   late ApiBaseHelper _helper = ApiBaseHelper(baseUrl: baseUrl);
 
   Future<int> confirmEnvio(int idEnvio, double geoLatitud, double geoLongitud, String token, BuildContext context) async {
-    // _postBody = jsonEncode(<String, dynamic>{
-    //   'IdEnvio': idEnvio,
-    //   'GeoLatitud': geoLatitud,
-    //   'GeoLongitud': geoLongitud
-    // });
-
-    // print(_postBody);
 
     _postBody = jsonEncode(EnvioConfirmado(
       idEnvio: idEnvio,
