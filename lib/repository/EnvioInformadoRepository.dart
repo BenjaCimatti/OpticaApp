@@ -19,7 +19,7 @@ class EnvioInformadoRepository {
   late String _postBody;
   late ApiBaseHelper _helper = ApiBaseHelper(baseUrl: baseUrl);
 
-  Future<int> confirmEnvio(int idEnvio, double geoLatitud, double geoLongitud, String observaciones, String token, BuildContext context) async {
+  Future<int> informEnvio(int idEnvio, double geoLatitud, double geoLongitud, String observaciones, String token, BuildContext context) async {
 
     _postBody = jsonEncode(EnvioFallido(
       idEnvio: idEnvio,

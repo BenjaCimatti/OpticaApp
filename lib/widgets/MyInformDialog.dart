@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:optica/classes/ColorPalette.dart';
 
-class MyConfirmationDialog {
+class MyInformDialog {
   BuildContext context;
   String alertTitle;
-  String alertContent;
+  Widget alertContent;
   String buttonText1;
   String buttonText2;
   void Function() buttonAction1;
   void Function() buttonAction2;
   bool isButtonDisabled;
 
-  MyConfirmationDialog({
+  MyInformDialog({
     required this.context,
     required this.alertTitle,
     required this.alertContent,
@@ -36,12 +36,7 @@ class MyConfirmationDialog {
             color: ColorPalette().getBluishGrey()
           ),
         ),
-        content: Text(
-          alertContent,
-          style: TextStyle(
-            color: ColorPalette().getLightBlueishGrey()
-          ),
-        ),
+        content: alertContent,
         elevation: 10.0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         actions: <Widget>[

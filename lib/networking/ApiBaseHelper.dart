@@ -100,7 +100,7 @@ class ApiBaseHelper {
 
     switch (response.statusCode) {
       case 200:
-        if (identifier == 'confirmEnvio') {
+        if (identifier == 'confirmEnvio' || identifier == 'informEnvio') {
           return 200;
         }
         String stringResponse = Utf8Decoder().convert(response.bodyBytes);
@@ -108,7 +108,7 @@ class ApiBaseHelper {
         print(responseJson);
         return responseJson;
       case 204:
-        if (identifier == 'confirmEnvio') {
+        if (identifier == 'confirmEnvio' || identifier == 'informEnvio') {
           return 204;
         }
         var responseJson = jsonDecode(response.body);
@@ -125,17 +125,12 @@ class ApiBaseHelper {
             buttonText: 'Ok',
             buttonAction: () => Phoenix.rebirth(context)
           ).createDialog();
-        } else if (identifier == 'envios') {
-          // MyDialog(
-          //   context: context,
-          //   alertTitle: 'Sesión caducada',
-          //   alertContent: 'La sesión en la que estaba ha caducado.\nPara continuar, vuelva a iniciar sesion',
-          //   buttonText: 'Ok',
-          //   buttonAction: () => Navigator.pop(context)
-          // ).createDialog();
         }
         throw UnauthorizedException('Failed to authenticate', 401);
       case 500:
+        if (identifier == 'confirmEnvio' || identifier == 'informEnvio') {
+          return 500;
+        }
         MyDialog(
           context: context,
           alertTitle: 'Error Interno del Servidor',

@@ -7,10 +7,13 @@ import 'package:optica/classes/Location.dart';
 import 'package:optica/models/Envio.dart';
 import 'package:optica/models/Token.dart';
 import 'package:optica/repository/EnvioConfirmadoRepository.dart';
+import 'package:optica/repository/EnvioInformadoRepository.dart';
 import 'package:optica/repository/EnvioRepository.dart';
 import 'package:optica/repository/TokenRepository.dart';
+import 'package:optica/widgets/Dropdown.dart';
 import 'package:optica/widgets/MyAlertDialog.dart';
 import 'package:optica/widgets/MyConfirmationDialog.dart';
+import 'package:optica/widgets/MyInformDialog.dart';
 import 'package:optica/widgets/NoData.dart';
 import 'dart:math' as math;
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
@@ -42,6 +45,9 @@ class _ListaEnviosState extends State<ListaEnvios> {
   late Future<Token> renewedToken;
   late Future<int> confirmedEnvio;
   late Future<Position> position;
+  late Future<int> failedEnvio;
+
+  late bool isButtonDisabled;
 
   late List<Envio> lista;
   final _markedEnvios = <Envio>[];
@@ -51,6 +57,7 @@ class _ListaEnviosState extends State<ListaEnvios> {
   @override
   void initState() {
     super.initState();
+    isButtonDisabled = false;
     envio = EnvioRepository(baseUrl: widget.baseUrl).getEnvio(widget.token, context);
   }
 
@@ -69,7 +76,34 @@ class _ListaEnviosState extends State<ListaEnvios> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               FloatingActionButton(
-                onPressed: () {},
+                heroTag: 'btnInform',
+                onPressed: () {
+                  if (_markedEnvios.length > 0) {
+                    print('envios mayor a 0');
+                    MyConfirmationDialog(
+                      context: context,
+                      alertTitle: 'Informar inconveniente de un envío',
+                      alertContent: alertContent('informará'),
+                      buttonText1: 'CANCELAR',
+                      buttonText2: 'INFORMAR',
+                      buttonAction1: () => Navigator.pop(context),
+                      buttonAction2: () {
+                        Navigator.pop(context);
+                        _dropdownDialog(context);
+                      },
+                      isButtonDisabled: false
+                    ).createDialog();
+                  } else {
+                    print('no hay envios');
+                    MyDialog(
+                      context: context,
+                      alertTitle: 'Ningún envío seleccionado',
+                      alertContent: 'Por favor, seleccione el envio en el que desee informar un inconveniente',
+                      buttonText: 'Ok',
+                      buttonAction: () => Navigator.pop(context)
+                    ).createDialog();
+                  }
+                },
                 backgroundColor: ColorPalette().getPastelRed(),
                 elevation: 1,
                 child: Icon(Icons.error_outline),
@@ -78,24 +112,31 @@ class _ListaEnviosState extends State<ListaEnvios> {
                 height: 10,
               ),
               FloatingActionButton(
+                heroTag: 'btnConfirm',
                 onPressed: (){
                   if (_markedEnvios.length > 0) {
                     print('envios mayor a 0');
                     MyConfirmationDialog(
                       context: context,
                       alertTitle: 'Confirmación de envío',
-                      alertContent: alertContent(),
+                      alertContent: alertContent('confirmará'),
                       buttonText1: 'CANCELAR',
                       buttonText2: 'CONFIRMAR',
                       buttonAction1: () => Navigator.pop(context),
-                      buttonAction2: () => _confirmEnvio(context)
+                      buttonAction2: () { 
+                        _confirmEnvio(context);
+                        setState(() {
+                          isButtonDisabled = true;          
+                        });
+                      },
+                      isButtonDisabled: isButtonDisabled,
                     ).createDialog();
                   } else {
                     print('no hay envios');
                     MyDialog(
                       context: context,
                       alertTitle: 'Ningún envío seleccionado',
-                      alertContent: 'Por favor, seleccione los\nenvios que desee marcar\ncomo completado',
+                      alertContent: 'Por favor, seleccione el envio que desee marcar como completado',
                       buttonText: 'Ok',
                       buttonAction: () => Navigator.pop(context)
                     ).createDialog();
@@ -175,7 +216,7 @@ class _ListaEnviosState extends State<ListaEnvios> {
                             CupertinoSliverRefreshControl(onRefresh: _loadEnvios,),
                             SliverToBoxAdapter(
                               child: ListView.builder(
-                                padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
+                                padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 100),
                                 shrinkWrap: true,
                                 primary: false,
                                 itemCount: lista.length,
@@ -218,6 +259,36 @@ class _ListaEnviosState extends State<ListaEnvios> {
           if (_markedEnvios.length == 0) {
             confirmedEnvio.then((value) {
               envio = EnvioRepository(baseUrl: widget.baseUrl).getEnvio(widget.token, context);
+              isButtonDisabled = false;         
+              Navigator.pop(context);
+              setState(() {});
+            });
+          }
+        }
+      });
+    });
+  }
+
+  Future<void> _informEnvio(DropdownMenu dropdownMenu, BuildContext context) async {
+    _verifyToken(() {
+      position = determinePosition(context);
+      position.then((location) {
+        var lat = location.latitude;
+        var long = location.longitude;
+        var length = _markedEnvios.length;
+
+        for (var i = 0; i < length; i++) {
+          Envio element = _markedEnvios[0];
+          String observacion = dropdownMenu.getDropdownValue();
+          print(element.idEnvio);
+          failedEnvio = EnvioInformadoRepository(baseUrl: widget.baseUrl).informEnvio(element.idEnvio, lat, long, observacion, widget.token, context);
+          _markedEnvios.remove(element);
+          print('Envios marcados restantes: $_markedEnvios');
+          if (_markedEnvios.length == 0) {
+            failedEnvio.then((value) {
+              envio = EnvioRepository(baseUrl: widget.baseUrl).getEnvio(widget.token, context);
+              isButtonDisabled = false;
+              Navigator.pop(context);
               setState(() {});
             });
           }
@@ -268,6 +339,7 @@ class _ListaEnviosState extends State<ListaEnvios> {
             if(alreadyMarked) {
               _markedEnvios.remove(envio);
             } else {
+              _markedEnvios.clear();
               _markedEnvios.add(envio);
             }          
             });
@@ -281,6 +353,7 @@ class _ListaEnviosState extends State<ListaEnvios> {
     await Future.delayed(Duration(seconds: 2));  
     _verifyToken(() {
       envio = EnvioRepository(baseUrl: widget.baseUrl).getEnvio(widget.token, context);
+      envio.then((value) => _markedEnvios.clear());
       setState(() {});
     });
   }
@@ -306,8 +379,8 @@ class _ListaEnviosState extends State<ListaEnvios> {
     });
   }
 
-  String alertContent() {
-    String enviosId = 'Se confirmarán los siguientes envíos:';
+  String alertContent(String verb) {
+    String enviosId = 'Se $verb el siguiente envío:';
 
     _markedEnvios.forEach((element) {
       enviosId += '\n${element.idEnvio} - ${element.descCliente}';
@@ -316,4 +389,24 @@ class _ListaEnviosState extends State<ListaEnvios> {
     return enviosId;
   }
 
+  void _dropdownDialog(context) {
+
+    DropdownMenu dropdownMenu = DropdownMenu();
+
+    MyInformDialog(
+      context: context,
+      alertTitle: '¿Cuál fue el inconveniente?',
+      alertContent: dropdownMenu,
+      buttonText1: 'CANCELAR',
+      buttonText2: 'INFORMAR',
+      buttonAction1: () => Navigator.pop(context),
+      buttonAction2: () {
+        _informEnvio(dropdownMenu, context);
+        setState(() {
+          isButtonDisabled = true;          
+        });
+      },
+      isButtonDisabled: isButtonDisabled,
+    ).createDialog();
+  }
 }
