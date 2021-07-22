@@ -6,14 +6,14 @@ class MyDialog {
   String alertTitle;
   String alertContent;
   String buttonText;
-  void Function() buttonAction;
+  void Function()? buttonAction;
 
   MyDialog({
     required this.context,
     required this.alertTitle,
     required this.alertContent,
     required this.buttonText,
-    required this.buttonAction,
+    this.buttonAction,
   });
 
   createDialog() async {
@@ -39,12 +39,11 @@ class MyDialog {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         actions: <Widget>[
           MaterialButton(
+            disabledTextColor: Colors.black.withOpacity(0.2),
+            textColor: ColorPalette().getBluishGrey(),
             onPressed: buttonAction,
             child: Text(
               buttonText,
-              style: TextStyle(
-                color: ColorPalette().getBluishGrey()
-              ),
             ),
           )
         ],

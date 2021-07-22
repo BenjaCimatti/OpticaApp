@@ -41,21 +41,19 @@ class MyInformDialog {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         actions: <Widget>[
           MaterialButton(
+            disabledTextColor: Colors.black.withOpacity(0.2),
+            textColor: ColorPalette().getBluishGrey(),
             onPressed: isButtonDisabled ? null : buttonAction1,
             child: Text(
               buttonText1,
-              style: TextStyle(
-                color: ColorPalette().getBluishGrey()
-              ),
             ),
           ),
           MaterialButton(
+            disabledTextColor: Colors.black.withOpacity(0.2),
+            textColor: ColorPalette().getBluishGrey(),
             onPressed: isButtonDisabled ? null : buttonAction2,
             child: Text(
               buttonText2,
-              style: TextStyle(
-                color: ColorPalette().getBluishGrey()
-              ),
             ),
           )
         ],

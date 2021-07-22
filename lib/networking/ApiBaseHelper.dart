@@ -39,7 +39,7 @@ class ApiBaseHelper {
       MyDialog(
         context: context,
         alertTitle: 'Conexión Fallida',
-        alertContent: 'Por favor, revise su conexión\na internet',
+        alertContent: 'Por favor, revise su conexión a internet',
         buttonText: 'Ok',
         buttonAction: () => Navigator.pop(context)
       ).createDialog();
@@ -78,7 +78,7 @@ class ApiBaseHelper {
       MyDialog(
         context: context,
         alertTitle: 'Conexión Fallida',
-        alertContent: 'Por favor, revise su conexión\na internet',
+        alertContent: 'Por favor, revise su conexión a internet',
         buttonText: 'Ok',
         buttonAction: () => Navigator.pop(context)
       ).createDialog();
@@ -135,7 +135,7 @@ class ApiBaseHelper {
           context: context,
           alertTitle: 'Error Interno del Servidor',
           alertContent:
-              'Se produjo un error en el servidor,\nasegúrese de tener una conexión\nestable a internet.\nVuelva a intentar más tarde',
+              'Se produjo un error en el servidor, asegúrese de tener una conexión estable a internet. Vuelva a intentar más tarde',
           buttonText: 'Ok',
           buttonAction: () => Navigator.pop(context)
         ).createDialog();

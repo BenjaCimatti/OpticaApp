@@ -8,7 +8,7 @@ class ApiException implements Exception {
   ]);
 
   String toString() {
-    return "$code $_prefix$_message";
+    return "";
   }
 }
 

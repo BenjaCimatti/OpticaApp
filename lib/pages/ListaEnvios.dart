@@ -262,6 +262,16 @@ class _ListaEnviosState extends State<ListaEnvios> {
               isButtonDisabled = false;         
               Navigator.pop(context);
               setState(() {});
+
+              if (value == 200) {
+                MyDialog(
+                  context: context,
+                  alertTitle: 'Confirmación exitosa',
+                  alertContent: 'El envío se ha confirmado con éxito',
+                  buttonText: 'Ok',
+                  buttonAction: () => Navigator.pop(context)
+                ).createDialog();
+              }
             });
           }
         }
@@ -290,6 +300,16 @@ class _ListaEnviosState extends State<ListaEnvios> {
               isButtonDisabled = false;
               Navigator.pop(context);
               setState(() {});
+
+              if (value == 200) {
+                MyDialog(
+                  context: context,
+                  alertTitle: 'Informe exitoso',
+                  alertContent: 'Se ha informado exitosamente sobre el inconveniente relacionado con el envío',
+                  buttonText: 'Ok',
+                  buttonAction: () => Navigator.pop(context)
+                ).createDialog();
+              }
             });
           }
         }
@@ -389,7 +409,7 @@ class _ListaEnviosState extends State<ListaEnvios> {
     return enviosId;
   }
 
-  void _dropdownDialog(context) {
+  Future<void> _dropdownDialog(context) async {
 
     DropdownMenu dropdownMenu = DropdownMenu();
 
@@ -401,10 +421,9 @@ class _ListaEnviosState extends State<ListaEnvios> {
       buttonText2: 'INFORMAR',
       buttonAction1: () => Navigator.pop(context),
       buttonAction2: () {
+        isButtonDisabled = true;
+        setState(() {});
         _informEnvio(dropdownMenu, context);
-        setState(() {
-          isButtonDisabled = true;          
-        });
       },
       isButtonDisabled: isButtonDisabled,
     ).createDialog();
