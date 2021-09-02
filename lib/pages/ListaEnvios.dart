@@ -4,8 +4,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:optica/classes/ColorPalette.dart';
 import 'package:optica/classes/Location.dart';
+import 'package:optica/models/Client.dart';
 import 'package:optica/models/Envio.dart';
 import 'package:optica/models/Token.dart';
+import 'package:optica/pages/SearchClient.dart';
+import 'package:optica/repository/ClientsRepository.dart';
 import 'package:optica/repository/EnvioConfirmadoRepository.dart';
 import 'package:optica/repository/EnvioInformadoRepository.dart';
 import 'package:optica/repository/EnvioRepository.dart';
@@ -41,6 +44,7 @@ class ListaEnvios extends StatefulWidget {
 class _ListaEnviosState extends State<ListaEnvios> {
 
   late Future<List<Envio>> envio;
+  late Future<List<Client>> clients;  
   late Future<bool> isExpired;
   late Future<Token> renewedToken;
   late Future<int> confirmedEnvio;
@@ -59,6 +63,85 @@ class _ListaEnviosState extends State<ListaEnvios> {
     super.initState();
     isButtonDisabled = false;
     envio = EnvioRepository(baseUrl: widget.baseUrl).getEnvio(widget.token, context);
+    clients = ClientsRepository(baseUrl: widget.baseUrl).getClients(widget.token, context);
+  }
+
+  int _selectedIndex = 0;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    print(_selectedIndex);
+    switch (_selectedIndex) {
+      case 0:
+        print('INFORMAR');
+        if (_markedEnvios.length > 0) {
+          print('envios mayor a 0');
+          MyConfirmationDialog(
+            context: context,
+            alertTitle: 'Informar inconveniente de un envío',
+            alertContent: alertContent('informará'),
+            buttonText1: 'CANCELAR',
+            buttonText2: 'INFORMAR',
+            buttonAction1: () => Navigator.pop(context),
+            buttonAction2: () {
+              Navigator.pop(context);
+              _dropdownDialog(context);
+            },
+            isButtonDisabled: false
+          ).createDialog();
+        } else {
+          print('no hay envios');
+          MyDialog(
+            context: context,
+            alertTitle: 'Ningún envío seleccionado',
+            alertContent: 'Por favor, seleccione el envio en el que desee informar un inconveniente',
+            buttonText: 'Ok',
+            buttonAction: () => Navigator.pop(context)
+          ).createDialog();
+        }
+        break;
+      case 1: 
+        print('ENVÍO DE REGRESO');
+        clients.then((clientList) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SearchClient(clientList: clientList, baseUrl: widget.baseUrl, token: widget.token,)
+          ));
+        });
+        break;
+      case 2: 
+        print('ENVÍO');
+        if (_markedEnvios.length > 0) {
+          print('envios mayor a 0');
+          MyConfirmationDialog(
+            context: context,
+            alertTitle: 'Confirmación de envío',
+            alertContent: alertContent('confirmará'),
+            buttonText1: 'CANCELAR',
+            buttonText2: 'CONFIRMAR',
+            buttonAction1: () => Navigator.pop(context),
+            buttonAction2: () { 
+              _confirmEnvio(context);
+              setState(() {
+                isButtonDisabled = true;          
+              });
+            },
+            isButtonDisabled: isButtonDisabled,
+          ).createDialog();
+        } else {
+          print('no hay envios');
+          MyDialog(
+            context: context,
+            alertTitle: 'Ningún envío seleccionado',
+            alertContent: 'Por favor, seleccione el envio que desee marcar como completado',
+            buttonText: 'Ok',
+            buttonAction: () => Navigator.pop(context)
+          ).createDialog();
+        }
+        break;
+    }
   }
 
   @override
@@ -71,83 +154,118 @@ class _ListaEnviosState extends State<ListaEnvios> {
         return new Future(() => false);
       },
       child: Scaffold(
-        floatingActionButton:
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              FloatingActionButton(
-                heroTag: 'btnInform',
-                onPressed: () {
-                  if (_markedEnvios.length > 0) {
-                    print('envios mayor a 0');
-                    MyConfirmationDialog(
-                      context: context,
-                      alertTitle: 'Informar inconveniente de un envío',
-                      alertContent: alertContent('informará'),
-                      buttonText1: 'CANCELAR',
-                      buttonText2: 'INFORMAR',
-                      buttonAction1: () => Navigator.pop(context),
-                      buttonAction2: () {
-                        Navigator.pop(context);
-                        _dropdownDialog(context);
-                      },
-                      isButtonDisabled: false
-                    ).createDialog();
-                  } else {
-                    print('no hay envios');
-                    MyDialog(
-                      context: context,
-                      alertTitle: 'Ningún envío seleccionado',
-                      alertContent: 'Por favor, seleccione el envio en el que desee informar un inconveniente',
-                      buttonText: 'Ok',
-                      buttonAction: () => Navigator.pop(context)
-                    ).createDialog();
-                  }
-                },
-                backgroundColor: ColorPalette().getPastelRed(),
-                elevation: 1,
-                child: Icon(Icons.error_outline),
+        bottomNavigationBar: BottomNavigationBar(
+          onTap: _onItemTapped,
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.white60,
+          unselectedItemColor: Colors.white60,
+          selectedFontSize: 12,
+          backgroundColor: ColorPalette().getDarkBlueishGrey(),
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.error_outline,
+                color: ColorPalette().getPastelRed(),
               ),
-              SizedBox(
-                height: 10,
+              backgroundColor: ColorPalette().getLightGreen(),
+              label: 'Informar',
+            ),
+            BottomNavigationBarItem(
+              icon: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.rotationY(math.pi),
+                child: Icon(Icons.local_shipping_outlined, color: ColorPalette().getLightGreen(),),
               ),
-              FloatingActionButton(
-                heroTag: 'btnConfirm',
-                onPressed: (){
-                  if (_markedEnvios.length > 0) {
-                    print('envios mayor a 0');
-                    MyConfirmationDialog(
-                      context: context,
-                      alertTitle: 'Confirmación de envío',
-                      alertContent: alertContent('confirmará'),
-                      buttonText1: 'CANCELAR',
-                      buttonText2: 'CONFIRMAR',
-                      buttonAction1: () => Navigator.pop(context),
-                      buttonAction2: () { 
-                        _confirmEnvio(context);
-                        setState(() {
-                          isButtonDisabled = true;          
-                        });
-                      },
-                      isButtonDisabled: isButtonDisabled,
-                    ).createDialog();
-                  } else {
-                    print('no hay envios');
-                    MyDialog(
-                      context: context,
-                      alertTitle: 'Ningún envío seleccionado',
-                      alertContent: 'Por favor, seleccione el envio que desee marcar como completado',
-                      buttonText: 'Ok',
-                      buttonAction: () => Navigator.pop(context)
-                    ).createDialog();
-                  }
-                },
-                backgroundColor: ColorPalette().getLightGreen(),
-                elevation: 1,
-                child: Icon(Icons.local_shipping_rounded),
+              backgroundColor: ColorPalette().getLightGreen(),
+              label: 'Envío de Regreso',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.local_shipping_rounded,
+                color: ColorPalette().getLightGreen(),
               ),
-            ],
-          ),
+              backgroundColor: ColorPalette().getLightGreen(),
+              label: 'Envío',
+            ),
+          ],
+        ),
+        // floatingActionButton:
+        //   Column(
+        //     mainAxisAlignment: MainAxisAlignment.end,
+        //     children: [
+        //       FloatingActionButton(
+        //         heroTag: 'btnInform',
+        //         onPressed: () {
+        //           if (_markedEnvios.length > 0) {
+        //             print('envios mayor a 0');
+        //             MyConfirmationDialog(
+        //               context: context,
+        //               alertTitle: 'Informar inconveniente de un envío',
+        //               alertContent: alertContent('informará'),
+        //               buttonText1: 'CANCELAR',
+        //               buttonText2: 'INFORMAR',
+        //               buttonAction1: () => Navigator.pop(context),
+        //               buttonAction2: () {
+        //                 Navigator.pop(context);
+        //                 _dropdownDialog(context);
+        //               },
+        //               isButtonDisabled: false
+        //             ).createDialog();
+        //           } else {
+        //             print('no hay envios');
+        //             MyDialog(
+        //               context: context,
+        //               alertTitle: 'Ningún envío seleccionado',
+        //               alertContent: 'Por favor, seleccione el envio en el que desee informar un inconveniente',
+        //               buttonText: 'Ok',
+        //               buttonAction: () => Navigator.pop(context)
+        //             ).createDialog();
+        //           }
+        //         },
+        //         backgroundColor: ColorPalette().getPastelRed(),
+        //         elevation: 1,
+        //         child: Icon(Icons.error_outline),
+        //       ),
+        //       SizedBox(
+        //         height: 10,
+        //       ),
+        //       FloatingActionButton(
+        //         heroTag: 'btnConfirm',
+        //         onPressed: (){
+        //           if (_markedEnvios.length > 0) {
+        //             print('envios mayor a 0');
+        //             MyConfirmationDialog(
+        //               context: context,
+        //               alertTitle: 'Confirmación de envío',
+        //               alertContent: alertContent('confirmará'),
+        //               buttonText1: 'CANCELAR',
+        //               buttonText2: 'CONFIRMAR',
+        //               buttonAction1: () => Navigator.pop(context),
+        //               buttonAction2: () { 
+        //                 _confirmEnvio(context);
+        //                 setState(() {
+        //                   isButtonDisabled = true;          
+        //                 });
+        //               },
+        //               isButtonDisabled: isButtonDisabled,
+        //             ).createDialog();
+        //           } else {
+        //             print('no hay envios');
+        //             MyDialog(
+        //               context: context,
+        //               alertTitle: 'Ningún envío seleccionado',
+        //               alertContent: 'Por favor, seleccione el envio que desee marcar como completado',
+        //               buttonText: 'Ok',
+        //               buttonAction: () => Navigator.pop(context)
+        //             ).createDialog();
+        //           }
+        //         },
+        //         backgroundColor: ColorPalette().getLightGreen(),
+        //         elevation: 1,
+        //         child: Icon(Icons.local_shipping_rounded),
+        //       ),
+        //     ],
+        //   ),
 
         backgroundColor: ColorPalette().getBluishGrey(),
         body: SafeArea(
