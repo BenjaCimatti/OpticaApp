@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:optica/classes/ColorPalette.dart';
-import 'package:optica/classes/Location.dart';
-import 'package:optica/models/Client.dart';
-import 'package:optica/models/ReturnId.dart';
-import 'package:optica/models/Token.dart';
-import 'package:optica/repository/ReturnIdRepository.dart';
-import 'package:optica/repository/TokenRepository.dart';
-import 'package:optica/widgets/MyAlertDialog.dart';
-import 'package:optica/widgets/TrailingIcon.dart';
+import 'package:laboratorio_elena/classes/ColorPalette.dart';
+import 'package:laboratorio_elena/classes/Location.dart';
+import 'package:laboratorio_elena/models/Client.dart';
+import 'package:laboratorio_elena/models/ReturnId.dart';
+import 'package:laboratorio_elena/models/Token.dart';
+import 'package:laboratorio_elena/repository/ReturnIdRepository.dart';
+import 'package:laboratorio_elena/repository/TokenRepository.dart';
+import 'package:laboratorio_elena/widgets/MyAlertDialog.dart';
+import 'package:laboratorio_elena/widgets/TrailingIcon.dart';
 import 'dart:math' as math;
 
 // ignore: must_be_immutable
@@ -40,6 +40,7 @@ class _SearchClientState extends State<SearchClient> {
   late Future<Token> renewedToken;
 
   late bool searching;
+  bool _isloading = false;
 
   final TextEditingController _searchController = new TextEditingController();
 
@@ -56,59 +57,28 @@ class _SearchClientState extends State<SearchClient> {
       appBar: buildAppBar(context),
       body: _searchedResults.length != 0 ?
       ListView.builder(
+        physics: AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics()
+        ),
         itemCount: _searchedResults.length,
         itemBuilder: (context, index) {
           return _createListTile(_searchedResults[index]);
         }
       ) :
       ListView.builder(
+        physics: AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics()
+        ),
         itemCount: widget.clientList.length,
         itemBuilder: (context, index) {
           return _createListTile(widget.clientList[index]);
         }
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          if (_markedClients.length > 0) {
-            _verifyToken(() {
-              position = determinePosition(context);
-              position.then((location) {
-                var lat = location.latitude;
-                var long = location.longitude;
-                _markedClients.forEach((client) {
-                  print('${client.descCliente} ${client.idCliente}');
-                  returnId = ReturnIdRepository(baseUrl: widget.baseUrl).returnEnvio(client.idCliente, lat, long, widget.token, context);
-                  setState(() {});
-                  returnId.then((id) {
-                    print(id.idRetorno);
-                    MyDialog(
-                      context: context,
-                      alertTitle: 'Id del Envío: ${id.idRetorno}',
-                      alertContent: 'Identifique de alguna manera el envío (paquete, embalaje, etc) con el id ${id.idRetorno}',
-                      buttonText: 'ENTENDIDO',
-                      buttonAction: ()  {
-                        setState(() {
-                          _markedClients.clear();
-                        });
-                        Navigator.pop(context);
-                      },
-                    ).createDialog();
-                  });
-                });
-              }); 
-            });            
-          } else {
-            MyDialog(
-              context: context,
-              alertTitle: 'Ningún cliente seleccionado',
-              alertContent: 'Por favor, seleccione el cliente desde el cual retorna un envío',
-              buttonText: 'Ok',
-              buttonAction: () => Navigator.pop(context)
-            ).createDialog();
-          }
-        },
-        backgroundColor: ColorPalette().getLightGreen(),
-        elevation: 1,
+        onPressed: _isloading ? null : returnEnvioButton,
+        backgroundColor: _isloading ? Colors.blueGrey : ColorPalette().getLightGreen(),
+        elevation: 20,
+        disabledElevation: 1,
         child: Transform(
           alignment: Alignment.center,
           transform: Matrix4.rotationY(math.pi),
@@ -218,6 +188,7 @@ class _SearchClientState extends State<SearchClient> {
             setState(() {
               if (searching) {
                 searching = false;
+                _searchedResults.clear();
               } else {
                 searching = true;
                 _searchController.clear();
@@ -228,16 +199,64 @@ class _SearchClientState extends State<SearchClient> {
     ]);
   }
 
-  void searchOperation(String text) {
+  Future<void> searchOperation(String text) async {
     print(text);
     _searchedResults.clear();
     widget.clientList.forEach((client) {
       if (searching) {
         if (client.descCliente.toLowerCase().contains(text.toLowerCase())) {
-          _searchedResults.add(client);
+          setState(() {
+            _searchedResults.add(client);
+          });
         }
       }
     });
+  }
+
+  Future<void> returnEnvioButton() async {
+    if (_markedClients.length > 0) {
+      setState(() {
+        _isloading = true;
+      });
+      _verifyToken(() {
+        position = determinePosition(context);
+        position.then((location) {
+          var lat = location.latitude;
+          var long = location.longitude;
+          _markedClients.forEach((client) {
+            print('${client.descCliente} ${client.idCliente}');
+            returnId = ReturnIdRepository(baseUrl: widget.baseUrl).returnEnvio(client.idCliente, lat, long, widget.token, context);
+            setState(() {});
+            returnId.then((id) {
+              print(id.idRetorno);
+              MyDialog(
+                context: context,
+                alertTitle: 'Id del Envío: ${id.idRetorno}',
+                alertContent: 'Identifique de alguna manera el envío (paquete, embalaje, etc) con el id ${id.idRetorno}',
+                buttonText: 'ENTENDIDO',
+                buttonAction: ()  {
+                  setState(() {
+                    _markedClients.clear();
+                  });
+                  Navigator.pop(context);
+                },
+              ).createDialog();
+              setState(() {
+                _isloading = false;
+              });
+            });
+          });
+        }); 
+      });            
+    } else {
+      MyDialog(
+        context: context,
+        alertTitle: 'Ningún cliente seleccionado',
+        alertContent: 'Por favor, seleccione el cliente desde el cual retorna un envío',
+        buttonText: 'Ok',
+        buttonAction: () => Navigator.pop(context)
+      ).createDialog();
+    }
   }
 
 }

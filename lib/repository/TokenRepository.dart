@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:optica/models/Token.dart';
-import 'package:optica/networking/ApiBaseHelper.dart';
+import 'package:laboratorio_elena/models/Token.dart';
+import 'package:laboratorio_elena/networking/ApiBaseHelper.dart';
 
 class TokenRepository {
 

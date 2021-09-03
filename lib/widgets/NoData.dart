@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:optica/classes/ColorPalette.dart';
+import 'package:laboratorio_elena/classes/ColorPalette.dart';
 
 class NoData extends StatelessWidget {
   const NoData({

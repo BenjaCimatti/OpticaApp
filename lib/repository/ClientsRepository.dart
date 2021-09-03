@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:optica/models/Client.dart';
-import 'package:optica/networking/ApiBaseHelper.dart';
+import 'package:laboratorio_elena/models/Client.dart';
+import 'package:laboratorio_elena/networking/ApiBaseHelper.dart';
 
 class ClientsRepository {
 

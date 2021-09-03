@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -14,7 +12,7 @@
    viewBox="0 0 52.916665 52.916668"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:version="1.0.2 (1.0.2+r75+1)"
    sodipodi:docname="Logo.svg">
   <defs
      id="defs2" />
@@ -25,20 +23,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="72.991934"
-     inkscape:cy="128.38183"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="93.503062"
+     inkscape:cy="83.176991"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1366"
-     inkscape:window-height="705"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-height="704"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      showguides="true"
      inkscape:guide-bbox="true"
-     units="px" />
+     units="px"
+     inkscape:document-rotation="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -47,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -64,72 +63,13 @@
        rx="26.16641"
        ry="26.166559" />
     <path
-       transform="matrix(0.37367451,0,0,0.37366977,48.96262,170.82621)"
-       sodipodi:type="inkscape:offset"
-       inkscape:radius="0"
-       inkscape:original="M -59.869141 197.04102 A 70.024612 70.025009 0 0 0 -129.89258 267.06641 A 70.024612 70.025009 0 0 0 -59.869141 337.0918 A 70.024612 70.025009 0 0 0 10.15625 267.06641 A 70.024612 70.025009 0 0 0 -59.869141 197.04102 z "
-       style="opacity:1;fill:#77b2d3;fill-opacity:1;stroke:none;stroke-width:1.20000005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path836-7-4"
-       d="m -59.869141,197.04102 a 70.024612,70.025009 0 0 0 -70.023439,70.02539 70.024612,70.025009 0 0 0 70.023439,70.02539 70.024612,70.025009 0 0 0 70.025391,-70.02539 70.024612,70.025009 0 0 0 -70.025391,-70.02539 z" />
+       style="opacity:1;fill:#fdcb0a;fill-opacity:1;stroke:none;stroke-width:1.69477;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 100.50195 1.4023438 A 98.896677 98.895984 0 0 0 1.6074219 100.29883 A 98.896677 98.895984 0 0 0 100.50195 199.19531 A 98.896677 98.895984 0 0 0 199.39844 100.29883 A 98.896677 98.895984 0 0 0 100.50195 1.4023438 z M 84.599609 36.617188 A 14.394673 64.144686 0 0 1 98.994141 100.76172 A 14.394673 64.144686 0 0 1 84.599609 164.9082 A 14.394673 64.144686 0 0 1 70.205078 100.76172 A 14.394673 64.144686 0 0 1 84.599609 36.617188 z M 131.24219 76.771484 A 10.606601 25.380081 0 0 1 131.32031 76.771484 A 10.606601 25.380081 0 0 1 141.92578 102.15234 A 10.606601 25.380081 0 0 1 131.32031 127.53125 A 10.606601 25.380081 0 0 1 120.71289 102.15234 A 10.606601 25.380081 0 0 1 131.24219 76.771484 z "
+       transform="matrix(0.26458333,0,0,0.26458333,0,244.08332)" />
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer2"
-     inkscape:label="Blanco"
-     transform="translate(0,-244.08332)">
-    <path
-       sodipodi:type="inkscape:offset"
-       inkscape:radius="0"
-       inkscape:original="M -59.869141 197.04102 A 70.024612 70.025009 0 0 0 -129.89258 267.06641 A 70.024612 70.025009 0 0 0 -59.869141 337.0918 A 70.024612 70.025009 0 0 0 10.15625 267.06641 A 70.024612 70.025009 0 0 0 -59.869141 197.04102 z "
-       style="opacity:1;fill:#e4e4e4;fill-opacity:1;stroke:none;stroke-width:1.20000005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path836-7"
-       d="m -59.869141,197.04102 a 70.024612,70.025009 0 0 0 -70.023439,70.02539 70.024612,70.025009 0 0 0 70.023439,70.02539 70.024612,70.025009 0 0 0 70.025391,-70.02539 70.024612,70.025009 0 0 0 -70.025391,-70.02539 z"
-       transform="matrix(0.24103572,0,0,0.24174891,40.622291,206.40772)" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer3"
-     inkscape:label="Verde"
-     transform="translate(0,-244.08332)">
-    <ellipse
-       style="opacity:1;fill:#75c1ae;fill-opacity:1;stroke:none;stroke-width:0.4327409;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path884"
-       cx="26.092052"
-       cy="271.07394"
-       rx="9.5876942"
-       ry="9.6376295" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer4"
-     inkscape:label="NegroAzulado"
-     transform="translate(0,-244.08332)">
-    <ellipse
-       style="opacity:1;fill:#4e5c72;fill-opacity:1;stroke:none;stroke-width:0.53021884;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path887"
-       cx="26.21689"
-       cy="271.08646"
-       rx="3.1209941"
-       ry="3.1334777" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer5"
-     inkscape:label="Brillo"
-     transform="translate(0,-244.08332)">
-    <ellipse
-       style="opacity:1;fill:#e4e4e4;fill-opacity:1;stroke:none;stroke-width:0.49132815;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path890"
-       cx="27.935232"
-       cy="269.3161"
-       rx="1.6904672"
-       ry="1.6948808" />
-    <ellipse
-       style="opacity:1;fill:#e4e4e4;fill-opacity:1;stroke:none;stroke-width:0.52005333;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path892"
-       cx="32.404121"
-       cy="264.66577"
-       rx="3.0212562"
-       ry="3.0498807" />
-  </g>
+     id="layer6"
+     inkscape:label="Brillo 1" />
 </svg>

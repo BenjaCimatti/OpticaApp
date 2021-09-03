@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:optica/widgets/MyAlertDialog.dart';
+import 'package:laboratorio_elena/widgets/MyAlertDialog.dart';
 
 /// Determine the current position of the device.
 ///

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:optica/models/EnvioFallido.dart';
-import 'package:optica/networking/ApiBaseHelper.dart';
+import 'package:laboratorio_elena/models/EnvioFallido.dart';
+import 'package:laboratorio_elena/networking/ApiBaseHelper.dart';
 
 class EnvioInformadoRepository {
 

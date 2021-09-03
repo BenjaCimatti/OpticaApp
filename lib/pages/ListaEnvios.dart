@@ -2,25 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:optica/classes/ColorPalette.dart';
-import 'package:optica/classes/Location.dart';
-import 'package:optica/models/Client.dart';
-import 'package:optica/models/Envio.dart';
-import 'package:optica/models/Token.dart';
-import 'package:optica/pages/SearchClient.dart';
-import 'package:optica/repository/ClientsRepository.dart';
-import 'package:optica/repository/EnvioConfirmadoRepository.dart';
-import 'package:optica/repository/EnvioInformadoRepository.dart';
-import 'package:optica/repository/EnvioRepository.dart';
-import 'package:optica/repository/TokenRepository.dart';
-import 'package:optica/widgets/Dropdown.dart';
-import 'package:optica/widgets/MyAlertDialog.dart';
-import 'package:optica/widgets/MyConfirmationDialog.dart';
-import 'package:optica/widgets/MyInformDialog.dart';
-import 'package:optica/widgets/NoData.dart';
+import 'package:laboratorio_elena/classes/ColorPalette.dart';
+import 'package:laboratorio_elena/classes/Location.dart';
+import 'package:laboratorio_elena/models/Client.dart';
+import 'package:laboratorio_elena/models/Envio.dart';
+import 'package:laboratorio_elena/models/Token.dart';
+import 'package:laboratorio_elena/pages/SearchClient.dart';
+import 'package:laboratorio_elena/repository/ClientsRepository.dart';
+import 'package:laboratorio_elena/repository/EnvioConfirmadoRepository.dart';
+import 'package:laboratorio_elena/repository/EnvioInformadoRepository.dart';
+import 'package:laboratorio_elena/repository/EnvioRepository.dart';
+import 'package:laboratorio_elena/repository/TokenRepository.dart';
+import 'package:laboratorio_elena/widgets/Dropdown.dart';
+import 'package:laboratorio_elena/widgets/MyAlertDialog.dart';
+import 'package:laboratorio_elena/widgets/MyConfirmationDialog.dart';
+import 'package:laboratorio_elena/widgets/MyInformDialog.dart';
+import 'package:laboratorio_elena/widgets/NoData.dart';
 import 'dart:math' as math;
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
-import 'package:optica/widgets/TrailingIcon.dart';
+import 'package:laboratorio_elena/widgets/TrailingIcon.dart';
 
 // ignore: must_be_immutable
 class ListaEnvios extends StatefulWidget {
@@ -189,84 +189,6 @@ class _ListaEnviosState extends State<ListaEnvios> {
             ),
           ],
         ),
-        // floatingActionButton:
-        //   Column(
-        //     mainAxisAlignment: MainAxisAlignment.end,
-        //     children: [
-        //       FloatingActionButton(
-        //         heroTag: 'btnInform',
-        //         onPressed: () {
-        //           if (_markedEnvios.length > 0) {
-        //             print('envios mayor a 0');
-        //             MyConfirmationDialog(
-        //               context: context,
-        //               alertTitle: 'Informar inconveniente de un envío',
-        //               alertContent: alertContent('informará'),
-        //               buttonText1: 'CANCELAR',
-        //               buttonText2: 'INFORMAR',
-        //               buttonAction1: () => Navigator.pop(context),
-        //               buttonAction2: () {
-        //                 Navigator.pop(context);
-        //                 _dropdownDialog(context);
-        //               },
-        //               isButtonDisabled: false
-        //             ).createDialog();
-        //           } else {
-        //             print('no hay envios');
-        //             MyDialog(
-        //               context: context,
-        //               alertTitle: 'Ningún envío seleccionado',
-        //               alertContent: 'Por favor, seleccione el envio en el que desee informar un inconveniente',
-        //               buttonText: 'Ok',
-        //               buttonAction: () => Navigator.pop(context)
-        //             ).createDialog();
-        //           }
-        //         },
-        //         backgroundColor: ColorPalette().getPastelRed(),
-        //         elevation: 1,
-        //         child: Icon(Icons.error_outline),
-        //       ),
-        //       SizedBox(
-        //         height: 10,
-        //       ),
-        //       FloatingActionButton(
-        //         heroTag: 'btnConfirm',
-        //         onPressed: (){
-        //           if (_markedEnvios.length > 0) {
-        //             print('envios mayor a 0');
-        //             MyConfirmationDialog(
-        //               context: context,
-        //               alertTitle: 'Confirmación de envío',
-        //               alertContent: alertContent('confirmará'),
-        //               buttonText1: 'CANCELAR',
-        //               buttonText2: 'CONFIRMAR',
-        //               buttonAction1: () => Navigator.pop(context),
-        //               buttonAction2: () { 
-        //                 _confirmEnvio(context);
-        //                 setState(() {
-        //                   isButtonDisabled = true;          
-        //                 });
-        //               },
-        //               isButtonDisabled: isButtonDisabled,
-        //             ).createDialog();
-        //           } else {
-        //             print('no hay envios');
-        //             MyDialog(
-        //               context: context,
-        //               alertTitle: 'Ningún envío seleccionado',
-        //               alertContent: 'Por favor, seleccione el envio que desee marcar como completado',
-        //               buttonText: 'Ok',
-        //               buttonAction: () => Navigator.pop(context)
-        //             ).createDialog();
-        //           }
-        //         },
-        //         backgroundColor: ColorPalette().getLightGreen(),
-        //         elevation: 1,
-        //         child: Icon(Icons.local_shipping_rounded),
-        //       ),
-        //     ],
-        //   ),
-
         backgroundColor: ColorPalette().getBluishGrey(),
         body: SafeArea(
           child: Column(
@@ -310,7 +232,7 @@ class _ListaEnviosState extends State<ListaEnvios> {
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset('assets/svg/Logo.svg')
+                      SvgPicture.asset('assets/svg/Logo.svg', color: ColorPalette().getLightGreen())
                     ],
                   ),
                 ),
@@ -323,8 +245,8 @@ class _ListaEnviosState extends State<ListaEnvios> {
 
                     return Expanded(
                       child: FadingEdgeScrollView.fromScrollView(
-                        gradientFractionOnEnd: 0.06,
-                        gradientFractionOnStart: 0.06,
+                        gradientFractionOnEnd: 0.02,
+                        gradientFractionOnStart: 0.02,
                         child: CustomScrollView(
                           controller: _scrollController,
                           physics: AlwaysScrollableScrollPhysics(

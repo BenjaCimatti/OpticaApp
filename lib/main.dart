@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:optica/pages/Login.dart';
-import 'package:optica/classes/ColorPalette.dart';
+import 'package:laboratorio_elena/pages/Login.dart';
+import 'package:laboratorio_elena/classes/ColorPalette.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(

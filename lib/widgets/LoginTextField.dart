@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:optica/classes/ColorPalette.dart';
+import 'package:laboratorio_elena/classes/ColorPalette.dart';
 
 class LoginTextField extends StatefulWidget {
 

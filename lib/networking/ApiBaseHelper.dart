@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:http/http.dart' as http;
-import 'package:optica/widgets/MyAlertDialog.dart';
+import 'package:laboratorio_elena/widgets/MyAlertDialog.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'ApiExceptions.dart';
