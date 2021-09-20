@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       color:
           ColorPalette().getDarkBlueishGrey(),
       debugShowCheckedModeBanner: false,
-      title: 'Envíos',
+      title: 'Laboratorio Elena',
       home: Login(),
     );
   }
